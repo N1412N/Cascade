@@ -1,0 +1,1903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VEX V5 Pure 3-Stage All-Chain Cascade Lift — 100% C-Channel CAD Guide</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root {
+      --background: #f8fafc;
+      --foreground: #0f172a;
+      --card: #ffffff;
+      --card-foreground: #0f172a;
+      --muted: #f1f5f9;
+      --muted-foreground: #475569;
+      --border: #e2e8f0;
+      --primary: #2563eb;
+      --primary-foreground: #ffffff;
+      --secondary: #e2e8f0;
+      --secondary-foreground: #1e293b;
+      --accent: #f59e0b;
+      --canvas-bg: #eef2f7;
+    }
+    .dark {
+      --background: #0b1120;
+      --foreground: #f1f5f9;
+      --card: #111827;
+      --card-foreground: #f1f5f9;
+      --muted: #1e293b;
+      --muted-foreground: #94a3b8;
+      --border: #1f2937;
+      --primary: #3b82f6;
+      --primary-foreground: #ffffff;
+      --secondary: #1e293b;
+      --secondary-foreground: #e2e8f0;
+      --accent: #fbbf24;
+      --canvas-bg: #0f172a;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background-color: var(--background);
+      color: var(--foreground);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    .bg-card { background-color: var(--card); color: var(--card-foreground); }
+    .bg-muted { background-color: var(--muted); }
+    .border-theme { border-color: var(--border); }
+    .text-muted { color: var(--muted-foreground); }
+    .btn-primary { background-color: var(--primary); color: var(--primary-foreground); }
+    .btn-secondary { background-color: var(--secondary); color: var(--secondary-foreground); }
+    .canvas-surface { background-color: var(--canvas-bg); }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-thumb { background: rgba(100,116,139,0.4); border-radius: 9999px; }
+    .interactive-row { transition: background-color 120ms ease, box-shadow 120ms ease; cursor: pointer; }
+    .interactive-row:hover, .interactive-row.is-selected {
+      background-color: rgba(6, 182, 212, 0.14);
+      box-shadow: inset 3px 0 0 0 #06b6d4;
+    }
+  </style>
+</head>
+<body class="flex flex-col h-screen overflow-hidden select-none">
+
+  <!-- Top Control Bar -->
+  <header class="bg-card border-b border-theme px-3 py-2 flex flex-wrap items-center justify-between gap-2 shrink-0">
+    <div class="flex items-center gap-2 min-w-0">
+      <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></div>
+      <div class="truncate">
+        <div class="font-semibold text-sm leading-tight truncate">VEX V5 Pure 3-Stage All-Chain Cascade Lift</div>
+        <div class="text-[11px] text-muted leading-tight truncate">100% VEX 1x2x1 &amp; 1x5x1 C-Channel Build &middot; Multi-Row Web Holes &middot; 0.00&quot; Overlap</div>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-1.5 text-xs">
+      <button id="btn-full-test" class="px-2.5 py-1 rounded font-medium btn-secondary border border-theme hover:opacity-90 transition cursor-pointer">Full Test Mode</button>
+      <button id="btn-labels" class="px-2.5 py-1 rounded font-medium btn-primary hover:opacity-90 transition cursor-pointer">Arrows &amp; Holes: ON</button>
+      <button id="btn-ghost" class="px-2.5 py-1 rounded font-medium btn-primary hover:opacity-90 transition cursor-pointer">Dim Earlier: ON</button>
+      <button id="btn-autofocus" class="px-2.5 py-1 rounded font-medium btn-primary hover:opacity-90 transition cursor-pointer">Auto-Focus: ON</button>
+      <button id="btn-motors" class="px-2.5 py-1 rounded font-medium btn-secondary border border-theme hover:opacity-90 transition cursor-pointer">Drive: 2&times; 11W (1:5)</button>
+      <button id="btn-bands" class="px-2.5 py-1 rounded font-medium btn-secondary border border-theme hover:opacity-90 transition cursor-pointer">#64 Bands: ON</button>
+      <button id="btn-angle" class="px-2.5 py-1 rounded font-medium btn-secondary border border-theme hover:opacity-90 transition cursor-pointer">Tilt: 0&deg; Vertical</button>
+      <button id="btn-xray" class="px-2.5 py-1 rounded font-medium btn-secondary border border-theme hover:opacity-90 transition cursor-pointer">X-Ray S0: OFF</button>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <main class="flex-1 flex flex-col lg:flex-row min-h-0 overflow-hidden">
+
+    <!-- Left 3D WebGL CAD Viewport -->
+    <section class="relative flex-1 flex flex-col min-w-0 min-h-[340px] canvas-surface">
+      <div class="absolute top-2.5 left-2.5 right-2.5 z-10 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
+        <div class="flex flex-wrap items-center gap-1 bg-card/90 backdrop-blur border border-theme rounded-md p-1 shadow-sm pointer-events-auto text-[11px]">
+          <button data-cam="iso" class="cam-btn px-2 py-0.5 rounded font-medium btn-primary cursor-pointer">Iso</button>
+          <button data-cam="front" class="cam-btn px-2 py-0.5 rounded font-medium btn-secondary cursor-pointer">Front</button>
+          <button data-cam="side" class="cam-btn px-2 py-0.5 rounded font-medium btn-secondary cursor-pointer">Side</button>
+          <button data-cam="top" class="cam-btn px-2 py-0.5 rounded font-medium btn-secondary cursor-pointer">Top</button>
+          <button data-cam="gearbox" class="cam-btn px-2 py-0.5 rounded font-medium btn-secondary cursor-pointer">Gearbox</button>
+          <span class="mx-0.5 text-muted">|</span>
+          <button id="btn-focus-step" class="px-2 py-0.5 rounded font-medium bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 border border-cyan-500/40 hover:bg-cyan-500/30 cursor-pointer">Focus Step</button>
+          <button id="btn-replay-step" class="px-2 py-0.5 rounded font-medium bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 cursor-pointer">Replay</button>
+        </div>
+
+        <div class="flex items-center gap-2 bg-card/90 backdrop-blur border border-theme rounded-md px-2.5 py-1 shadow-sm pointer-events-auto text-[11px]">
+          <label for="slider-fit" class="text-muted font-medium">Explode Inspect:</label>
+          <input id="slider-fit" type="range" min="0" max="100" value="0" class="w-20 accent-blue-600 cursor-pointer" />
+          <span id="fit-val" class="font-mono w-9 text-right">0%</span>
+        </div>
+      </div>
+
+      <div id="viewport-wrap" class="relative flex-1 w-full min-h-0 overflow-hidden cursor-grab active:cursor-grabbing">
+        <canvas id="cad-gl" class="absolute inset-0 w-full h-full block"></canvas>
+        <canvas id="cad-overlay" class="absolute inset-0 w-full h-full block pointer-events-none"></canvas>
+      </div>
+
+      <div class="bg-card border-t border-theme px-3 py-2 flex flex-wrap items-center justify-between gap-3 shrink-0 text-xs">
+        <div class="flex flex-wrap items-center gap-2">
+          <button id="btn-animate" class="px-2.5 py-1 rounded font-medium btn-primary cursor-pointer">Auto-Cycle</button>
+          <div class="flex items-center gap-1.5">
+            <label for="slider-ext" class="text-muted font-medium">Lift Target:</label>
+            <input id="slider-ext" type="range" min="0" max="100" value="25" class="w-28 sm:w-36 accent-blue-600 cursor-pointer" />
+            <span id="ext-val" class="font-mono font-semibold w-14">4.50&quot;</span>
+          </div>
+          <div class="flex items-center gap-1">
+            <button data-preset="0" class="preset-btn px-1.5 py-0.5 rounded text-[11px] btn-secondary border border-theme cursor-pointer">0%</button>
+            <button data-preset="25" class="preset-btn px-1.5 py-0.5 rounded text-[11px] btn-primary cursor-pointer">25%</button>
+            <button data-preset="50" class="preset-btn px-1.5 py-0.5 rounded text-[11px] btn-secondary border border-theme cursor-pointer">50%</button>
+            <button data-preset="75" class="preset-btn px-1.5 py-0.5 rounded text-[11px] btn-secondary border border-theme cursor-pointer">75%</button>
+            <button data-preset="100" class="preset-btn px-1.5 py-0.5 rounded text-[11px] btn-secondary border border-theme cursor-pointer">100%</button>
+          </div>
+        </div>
+
+        <div id="physics-readout" class="flex flex-wrap items-center gap-3 text-[11px] font-mono text-muted">
+          <span>Vel: <strong class="text-[var(--foreground)]" id="tel-vel">0.0 &quot;/s</strong></span>
+          <span>Motor: <strong class="text-[var(--foreground)]" id="tel-rpm">0 RPM</strong></span>
+          <span>Torque: <strong class="text-[var(--foreground)]" id="tel-trq">0.00 N&middot;m</strong></span>
+          <span>Band Assist: <strong class="text-emerald-600 dark:text-emerald-400" id="tel-band">5.4 lb</strong></span>
+          <span>Drag: <span class="font-sans">Left=Orbit &middot; Right/Shift=Pan &middot; Wheel=Zoom</span></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right Interactive Step-by-Step Instructions Panel -->
+    <aside class="w-full lg:w-[465px] xl:w-[505px] bg-card border-t lg:border-t-0 lg:border-l border-theme flex flex-col min-h-0 shrink-0">
+      <div class="p-3 border-b border-theme shrink-0">
+        <div class="flex items-center justify-between mb-2">
+          <span id="step-badge" class="text-[11px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-blue-500/15 text-blue-600 dark:text-blue-400">Step 1 of 10</span>
+          <span class="text-[11px] font-mono text-emerald-600 dark:text-emerald-400">100% C-Channel Structural Framing</span>
+        </div>
+        <div id="step-pills" class="flex flex-wrap gap-1"></div>
+      </div>
+
+      <div class="flex-1 overflow-y-auto p-3 space-y-3 min-h-0">
+        <div id="step-content" class="space-y-2"></div>
+
+        <div id="step-spotlight-banner" class="hidden border border-cyan-500/50 bg-cyan-500/10 rounded-md px-2.5 py-2 text-xs space-y-1"></div>
+
+        <div class="border border-theme rounded-md overflow-hidden">
+          <div class="bg-amber-500/15 px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-300 flex items-center justify-between">
+            <span>Exact Screw &amp; Fastener Placements (Click to Zoom)</span>
+            <span class="font-normal">Hole # &middot; Stack-Up</span>
+          </div>
+          <div id="step-screws" class="divide-y divide-[var(--border)] text-xs"></div>
+        </div>
+
+        <div class="border border-theme rounded-md overflow-hidden">
+          <div class="bg-muted px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-wide flex items-center justify-between">
+            <span>Parts Installed in Step (Hover / Click to Highlight)</span>
+            <span class="text-muted font-normal">.f3d &amp; VEX SKU</span>
+          </div>
+          <div id="step-bom" class="divide-y divide-[var(--border)] text-xs"></div>
+        </div>
+      </div>
+
+      <div class="p-2.5 border-t border-theme flex items-center justify-between gap-2 shrink-0 bg-muted/40">
+        <button id="btn-prev" class="flex-1 py-1.5 px-3 rounded font-medium text-xs btn-secondary border border-theme hover:opacity-90 disabled:opacity-40 cursor-pointer">&larr; Previous Step</button>
+        <button id="btn-next" class="flex-1 py-1.5 px-3 rounded font-medium text-xs btn-primary hover:opacity-90 disabled:opacity-40 cursor-pointer">Next Step &rarr;</button>
+      </div>
+    </aside>
+
+  </main>
+
+  <script>
+  (function () {
+    "use strict";
+
+    // =========================================================================
+    // 1. STATE, CAMERA GOALS & THEME MANAGEMENT
+    // =========================================================================
+    const state = {
+      step: 1,
+      fullTest: false,
+      showLabels: true,
+      ghostPrev: true,
+      autoFocusStep: true,
+      dualMotor: true,
+      bands: true,
+      tilted: false,
+      xrayOuter: false,
+      explode: 0.0,
+      targetExt: 0.25,
+      ext: 0.25,
+      vel: 0.0,
+      autoAnimate: false,
+      animDir: 1,
+      stepAnim: 1.0,
+      hoverGroup: null,
+      hoverKind: null,
+      selectedGroup: null,
+      selectedKind: null,
+      cam: {
+        yaw: -0.58,
+        pitch: 0.36,
+        dist: 24.0,
+        tx: 0.0,
+        ty: 3.0,
+        tz: 0.2
+      },
+      camGoal: null,
+      isDark: document.documentElement.classList.contains("dark")
+    };
+
+    const STEP_CAMERAS = {
+      1:  { yaw: -0.58, pitch: 0.36, dist: 24.0, tx:  0.0, ty:  3.0, tz:  0.2 },
+      2:  { yaw: -2.45, pitch: 0.32, dist: 31.0, tx:  0.0, ty:  8.5, tz: -3.5 },
+      3:  { yaw:  2.55, pitch: 0.30, dist: 21.0, tx:  0.0, ty:  2.4, tz: -4.0 },
+      4:  { yaw: -1.10, pitch: 0.22, dist: 28.0, tx:  3.5, ty:  9.5, tz: -3.2 },
+      5:  { yaw:  0.55, pitch: 0.24, dist: 24.0, tx:  3.6, ty:  9.5, tz:  0.0 },
+      6:  { yaw: -0.70, pitch: 0.24, dist: 28.0, tx:  0.0, ty:  8.5, tz: -0.8 },
+      7:  { yaw:  0.48, pitch: 0.22, dist: 25.0, tx:  2.8, ty:  8.0, tz:  0.0 },
+      8:  { yaw:  0.40, pitch: 0.26, dist: 24.0, tx:  0.0, ty:  7.5, tz:  0.2 },
+      9:  { yaw: -1.05, pitch: 0.20, dist: 23.0, tx:  3.6, ty:  7.0, tz: -1.0 },
+      10: { yaw: -2.65, pitch: 0.24, dist: 27.0, tx:  0.0, ty:  8.5, tz: -3.4 }
+    };
+
+    function setCamGoal(pose) {
+      if (!pose) return;
+      state.camGoal = { yaw: pose.yaw, pitch: pose.pitch, dist: pose.dist, tx: pose.tx, ty: pose.ty, tz: pose.tz };
+    }
+
+    function shortestAngleDiff(a, b) {
+      let d = ((b - a + Math.PI) % (Math.PI * 2)) - Math.PI;
+      if (d < -Math.PI) d += Math.PI * 2;
+      return d;
+    }
+
+    function syncThemeFromHost() {
+      const dark = document.documentElement.classList.contains("dark") ||
+                   window.matchMedia("(prefers-color-scheme: dark)").matches;
+      state.isDark = dark;
+    }
+    syncThemeFromHost();
+    window.addEventListener("themechange", (e) => {
+      if (e && e.detail && typeof e.detail.dark === "boolean") {
+        state.isDark = e.detail.dark;
+        document.documentElement.classList.toggle("dark", state.isDark);
+      } else {
+        syncThemeFromHost();
+      }
+    });
+
+    // =========================================================================
+    // 2. STEP DEFINITIONS (100% VEX C-CHANNELS & MULTI-ROW HOLE NUMBERING)
+    // =========================================================================
+    function getSteps() {
+      const s1 = state.ext * 9.0;
+      const s2 = state.ext * 18.0;
+      const motorCount = state.dualMotor ? 2 : 1;
+      return [
+        {
+          id: 1,
+          title: "1x5x1x25 & 1x2x1x25 Base C-Channels + Stage 0 Towers",
+          desc: "Build the chassis base using a 25-hole 1x5x1 C-Channel (5x25) opening downward (Y = -0.50\"..0.00\") backed beneath by two 25-hole 1x2x1 C-Channel Skids at Z = \u00b10.75\". Bolt Left/Right 35-hole 1x2x1 Stage 0 Towers vertically at X = \u00b15.50\" with four 90\u00b0 L-Gussets.",
+          tip: "Using a 5-wide 1x5x1 C-Channel instead of flat plate gives rigid downward U-flanges at Z = \u00b11.25\" with 5 full rows of 0.182\" square web holes!",
+          bom: [
+            { group: 10, name: "1x5x1x25 Al C-Channel (5-Wide Main Base)", qty: "1\u00d7", sku: "276-2290", f3d: "Structure/Aluminum/5x C-Channel/25 - 5x C-Chan.f3d", hole: "5 Web Rows (-1.00\"..+1.00\") \u00d7 25 Holes", focus: { yaw: -0.45, pitch: 0.45, dist: 23, tx: 0, ty: 0.2, tz: 0 } },
+            { group: 11, name: "1x2x1x25 Al C-Channel (Front & Rear Lower Skids)", qty: "2\u00d7", sku: "276-2289", f3d: "Structure/Aluminum/2x C-Channel/25 - 2x C-Chan.f3d", hole: "Beneath 5x25 Base at Z = \u00b10.75\" (Y = -1.00\"..-0.50\")", focus: { yaw: 0.50, pitch: 0.18, dist: 21, tx: 0, ty: -0.5, tz: 0.75 } },
+            { group: 12, name: "1x2x1x35 Al C-Channel (17.5\" S0 Vertical Towers)", qty: "2\u00d7", sku: "276-2289", f3d: "Structure/Aluminum/2x C-Channel/35 - 2x C-Chan.f3d", hole: "X = \u00b15.50\" (Base Holes #2 & #24), Y = 0.002\"..17.502\"", focus: { yaw: -0.60, pitch: 0.26, dist: 32, tx: 0, ty: 8.5, tz: 0 } },
+            { group: 13, name: "90-Degree Gusset Angle", qty: "4\u00d7", sku: "276-2577", f3d: "Structure/Gussets/90 Degrees/90-Degree Gusset Angle.f3d", hole: "S0 Hole #1 (Y=0.25\") + Base Row #1/#5", focus: { yaw: 0.52, pitch: 0.28, dist: 12, tx: 5.5, ty: 0.4, tz: 0.4 } }
+          ],
+          screws: [
+            { group: 0, pin: "S0 H1 \u2022 0.500\" Tower", loc: "90\u00b0 Gusset Vertical Leg -> S0 Tower Front & Back Flange", hole: "S0 Tower: Hole #1 from bottom (Y=0.25\")", size: "#8-32 \u00d7 0.500\" Star", nut: "Keps Nut (275-1026)", qty: "4\u00d7", sku: "276-4992", stack: "[Screw #8-32\u00d70.500\"] \u2192 [Gusset Vertical Leg] \u2192 [S0 Tower Flange] \u2192 [Keps Nut Inside Channel]", focus: { yaw: 0.45, pitch: 0.26, dist: 11, tx: 5.5, ty: 0.3, tz: 0.4 } },
+            { group: 1, pin: "5x25 Row 2/4 \u2022 0.375\" Foot", loc: "90\u00b0 Gusset Foot -> 5x25 C-Channel Top Web", hole: "Base X-Hole #2 & #24, Rows Z = \u00b10.75\"", size: "#8-32 \u00d7 0.375\" Star", nut: "Keps Nut (275-1026)", qty: "4\u00d7", sku: "276-4991", stack: "[Screw #8-32\u00d70.375\" Down] \u2192 [Gusset Foot] \u2192 [5x25 C-Chan Web] \u2192 [Keps Nut]", focus: { yaw: 0.65, pitch: 0.35, dist: 12, tx: 5.5, ty: 0.0, tz: 0.8 } },
+            { group: 2, pin: "H5..21 \u2022 0.500\" Standoff-Base", loc: "5x25 C-Channel Bottom Flange -> 2x25 Base Skids", hole: "Perimeter Holes #5, #9, #13, #17, #21 (Z = \u00b11.00\")", size: "#8-32 \u00d7 0.500\" Star", nut: "Keps Nut (275-1026)", qty: "10\u00d7", sku: "276-4992", stack: "[Screw #8-32\u00d70.500\" Down] \u2192 [5x25 C-Chan Web Row #1/#5] \u2192 [2x25 Skid Top] \u2192 [Keps Nut]", focus: { yaw: -0.40, pitch: 0.48, dist: 18, tx: 0, ty: 0.0, tz: 0.5 } }
+          ]
+        },
+        {
+          id: 2,
+          title: "Rear 6.000\" Hex Standoff Box & Stage 0 24-Hole C-Braces",
+          desc: "Thread four 6.000\" (0.250\" AF) Hex Standoffs behind Stage 0 Rear Flanges at Hole #2 (bottom) and Hole #32 (top). Cap the rear with two 24-hole 1x2x1x24 C-Channels at Z = -6.754\".",
+          tip: "Screws enter Stage 0 from INSIDE the open front channel cavity going rearward into the standoffs, and from BEHIND the 24-hole brace web going forward into the standoffs.",
+          bom: [
+            { group: 10, name: "6.000\" Standoff (8-32, Aluminum Hex)", qty: "4\u00d7", sku: "275-1023", f3d: "Hardware/Standoffs/6.000 Standoff (8-32, Aluminum).f3d", hole: "S0 Rear Flange: Hole #2 (0.75\") & Hole #32 (15.75\")", focus: { yaw: -2.25, pitch: 0.25, dist: 24, tx: 3.5, ty: 8.5, tz: -3.5 } },
+            { group: 11, name: "1x2x1x24 Al C-Channel (12.0\" S0 Cross-Brace)", qty: "2\u00d7", sku: "276-2289", f3d: "Structure/Aluminum/2x C-Channel/24 - 2x C-Chan.f3d", hole: "Brace End Holes #2 & #23 (X = \u00b15.50\")", focus: { yaw: 2.95, pitch: 0.22, dist: 28, tx: 0, ty: 8.5, tz: -6.7 } }
+          ],
+          screws: [
+            { group: 0, pin: "S0 H2/32 \u2022 0.375\" Front", loc: "S0 Rear Flange -> Front Thread of 6.000\" Standoff", hole: "S0 Tower Holes #2 (Y=0.75\") & #32 (Y=15.75\")", size: "#8-32 \u00d7 0.375\" Star", nut: "Standoff Internal Thread", qty: "4\u00d7", sku: "276-4991", stack: "[Screw #8-32\u00d70.375\" Rearward] \u2192 [S0 Tower Rear Flange] \u2192 [6.000\" Standoff Front]", focus: { yaw: -1.95, pitch: 0.18, dist: 16, tx: 5.5, ty: 15.75, tz: -1.5 } },
+            { group: 1, pin: "Brace H2/23 \u2022 0.375\" Back", loc: "S0 Rear C-Braces -> Back Thread of 6.000\" Standoff", hole: "24-Hole Brace Web Holes #2 & #23 (Y=0.75\"/15.75\")", size: "#8-32 \u00d7 0.375\" Star", nut: "Standoff Internal Thread", qty: "4\u00d7", sku: "276-4991", stack: "[Screw #8-32\u00d70.375\" Forward] \u2192 [24-Hole C-Brace Web] \u2192 [6.000\" Standoff Back]", focus: { yaw: 2.90, pitch: 0.24, dist: 18, tx: 5.0, ty: 15.75, tz: -6.5 } }
+          ]
+        },
+        {
+          id: 3,
+          title: "1x5x1x8 Gearbox C-Channels, 1x2x1x8 Bearing Arms & 1:5 Gear",
+          desc: `Mount Left/Right 8-hole 1x5x1 Gearbox C-Channels (5\u00d78 holes, Z = -6.50\"..-2.50\") with inward top/bottom flanges at X = \u00b10.55\" (web at \u00b10.80\"). Fit HS Bearing Flats inside the web, bolt ${motorCount}\u00d7 11W Motor(s), mesh 12T Pinion -> 60T HS Gear (3-Hole Lockbar), and bolt 8-hole 1x2x1 Bearing Arm C-Channels onto Stage 0.`,
+          tip: "1x5x1 C-Channels create a stiff boxed gearbox tower, and 1x2x1x8 outer C-Channel arms cradle the HS Pillow Bearing Blocks cleanly inside their outward-facing channel cavity.",
+          bom: [
+            { group: 10, name: "1x5x1x8 Al C-Channel (5-Wide Gearbox Framing)", qty: "2\u00d7", sku: "276-2290", f3d: "Structure/Aluminum/5x C-Channel/8 - 5x C-Chan.f3d", hole: "Lower Brace Holes #11 (X=-0.80\") & #14 (X=+0.80\")", focus: { yaw: 2.45, pitch: 0.30, dist: 15, tx: 0, ty: 2.25, tz: -4.5 } },
+            { group: 11, name: "V5 Smart Motor (11W) + 12T Pinion + 60T Gear + Lockbar", qty: `${motorCount}\u00d7 / 1\u00d7`, sku: "276-4840", f3d: "Motion/Lock Bars/3 Hole HS Lockbar_.f3d", hole: "5x8 C-Chan Row #3: Z=-4.75\" (Pinion) & Z=-3.25\" (60T)", focus: { yaw: 2.68, pitch: 0.25, dist: 13, tx: 0, ty: 2.25, tz: -4.0 } },
+            { group: 12, name: "1x2x1x8 Al C-Channel (Outer S0 Bearing Arms) + Pillow Blocks", qty: "4\u00d7 each", sku: "276-2289", f3d: "Structure/Aluminum/2x C-Channel/8 - 2x C-Chan.f3d", hole: "S0 Outer Web H5 (Y=2.25\") & H34 (Y=16.75\")", focus: { yaw: -1.75, pitch: 0.22, dist: 14, tx: 5.8, ty: 2.25, tz: -2.5 } },
+            { group: 13, name: "V5 Rotation Sensor + 12.000\" HS Square Shaft", qty: "1\u00d7 each", sku: "276-6050", f3d: "Electronics/Sensors/V5 Rotation Sensor.f3d", hole: state.dualMotor ? "Outer Left Arm C-Chan (X=-6.45\")" : "Left 5x8 C-Chan Web (X=-1.00\")", focus: { yaw: -2.20, pitch: 0.20, dist: 13, tx: state.dualMotor ? -6.45 : -1.0, ty: 2.25, tz: -3.25 } }
+          ],
+          screws: [
+            { group: 0, pin: "Brace H11/14 \u2022 0.375\"", loc: "5x8 Gearbox C-Channel Rear -> Lower C-Brace Flange", hole: "Brace Holes #11 (X=-0.80\") & #14 (X=+0.80\")", size: "#8-32 \u00d7 0.375\" Star", nut: "Keps Nut (275-1026)", qty: "4\u00d7", sku: "276-4991", stack: "[Screw #8-32\u00d70.375\"] \u2192 [5x8 C-Chan Flange/Web] \u2192 [S0 Bottom Brace] \u2192 [Keps Nut]", focus: { yaw: 2.85, pitch: 0.25, dist: 11, tx: 0.75, ty: 1.5, tz: -6.4 } },
+            { group: 1, pin: "5x8 Row 3 \u2022 0.375\" Motor", loc: "V5 Motor Cartridge Faceplate -> 5x8 Gearbox C-Chan Web", hole: "5x8 Web Row #3 (Z=-4.75\", X=\u00b10.80\")", size: "#8-32 \u00d7 0.375\" Star", nut: "Motor M3/8-32 Bosses", qty: `${motorCount * 2}\u00d7`, sku: "276-4991", stack: "[Screw #8-32\u00d70.375\" Outward] \u2192 [5x8 C-Chan Web] \u2192 [V5 Motor #8-32 Insert]", focus: { yaw: 2.40, pitch: 0.25, dist: 12, tx: 1.5, ty: 2.25, tz: -4.75 } },
+            { group: 2, pin: "S0 H5/34 \u2022 0.500\" Pillow", loc: "HS Pillow Bearings -> 1x2x1x8 Arm C-Chan -> S0 Web", hole: "S0 Web H5 (2.25\") & H34 (16.75\"); Arm Cavity X=\u00b15.755\"", size: "#8-32 \u00d7 0.500\" Star", nut: "Nylock Nut (275-1027)", qty: "12\u00d7", sku: "276-4992", stack: "[Screw #8-32\u00d70.500\" Inward] \u2192 [Pillow Block] \u2192 [2x8 Arm C-Chan Web] \u2192 [Nylock]", focus: { yaw: -1.75, pitch: 0.22, dist: 13, tx: 5.9, ty: 2.25, tz: -3.25 } },
+            { group: 3, pin: "Rot \u2022 0.750\" Sensor", loc: `V5 Rotation Sensor -> ${state.dualMotor ? "Left Bottom Arm C-Chan Flange (X=-6.45\")" : "Left 5x8 C-Chan Web (X=-1.00\")"}`, hole: `Y = 2.25\", Z = -3.75\" & -2.75\"`, size: "#8-32 \u00d7 0.750\" Star", nut: "Nylock Nut (275-1027)", qty: "2\u00d7", sku: "276-4994", stack: "[Screw #8-32\u00d70.750\"] \u2192 [Rotation Sensor] \u2192 [C-Channel Bearing Mount] \u2192 [Nylock]", focus: { yaw: -2.10, pitch: 0.18, dist: 11, tx: state.dualMotor ? -6.45 : -1.0, ty: 2.25, tz: -3.25 } }
+          ]
+        },
+        {
+          id: 4,
+          title: "Stage 0 12T Sprockets (9P), Steel Inserts & Closed Chain",
+          desc: "Slide four 12T Sprocket - 9P wheels with Steel Square Inserts onto the lower drive shaft (H5) and top 2.000\" HS stub axles (H34) centered at X = \u00b14.60\". Lock laterally with HS Clamping Collars and close the 9P HS chain loop.",
+          tip: "Upper HS Pillow Blocks nest inside the top 1x2x1x8 Bearing Arm C-Channels at Y = 16.75\", X = \u00b15.92\".",
+          bom: [
+            { group: 10, name: "12T Sprocket - 9P + HS Square Insert (Steel)", qty: "4\u00d7 each", sku: "276-3877", f3d: "Motion/Sprockets/9P/12T/12T Sprocket - 9P.f3d", hole: "Bottom Y=2.25\" (H5) & Top Y=16.75\" (H34), X=\u00b14.60\"", focus: { yaw: -1.15, pitch: 0.22, dist: 16, tx: 4.6, ty: 16.75, tz: -3.25 } },
+            { group: 11, name: "2.000\" HS Shafts + HS Clamping Shaft Collars", qty: "2\u00d7 / 4\u00d7", sku: "276-6102", f3d: "Motion/Collars/HS Clamping Shaft Collar.f3d", hole: "Lock Sprocket Track at X = \u00b14.92\"", focus: { yaw: -1.25, pitch: 0.24, dist: 14, tx: 4.9, ty: 16.75, tz: -3.25 } },
+            { group: 12, name: "Chain Link (9P High Strength Closed Loop)", qty: "2\u00d7 runs", sku: "276-2252", f3d: "Motion/Chain Links/9P (High Strength Chain)/Chain Link (9P).f3d", hole: "Loops around Y=2.25\" & Y=16.75\" Sprockets (Z=-2.53\" / -3.97\")", focus: { yaw: -1.20, pitch: 0.20, dist: 26, tx: 4.6, ty: 9.5, tz: -3.25 } }
+          ],
+          screws: [
+            { group: 0, pin: "X=\u00b14.92 \u2022 Clamp Collar", loc: "HS Clamping Collars -> Upper & Lower Shafts", hole: "Outboard of 12T Sprockets (X = \u00b14.92\", Y = 2.25\" & 16.75\")", size: "#8-32 \u00d7 0.500\" Clamp", nut: "Collar Integrated Thread", qty: "4\u00d7", sku: "276-6102", stack: "[Steel Square Insert] \u2192 [12T Sprocket] \u2192 [HS Clamping Collar on 0.25\" Shaft]", focus: { yaw: -1.25, pitch: 0.24, dist: 12, tx: 4.9, ty: 16.75, tz: -3.25 } },
+            { group: 1, pin: "H34 \u2022 0.500\" Top Pillow", loc: "Upper HS Pillow Blocks -> Top 1x2x1x8 Arm C-Channel", hole: "S0 Web Hole #34 (Y=16.75\"), Pillow Z=-3.75\"/-2.75\"", size: "#8-32 \u00d7 0.500\" Star", nut: "Nylock Nut (275-1027)", qty: "4\u00d7", sku: "276-4992", stack: "[Screw #8-32\u00d70.500\" Inward] \u2192 [HS Pillow Block] \u2192 [2x8 Arm C-Chan Web] \u2192 [Nylock]", focus: { yaw: 1.95, pitch: 0.24, dist: 13, tx: 5.9, ty: 16.75, tz: -3.25 } }
+          ]
+        },
+        {
+          id: 5,
+          title: "Stage 0 3-Hole C-Channel Guide Brackets & Nylon Rollers",
+          desc: "Sandwich Stage 0 Front & Rear Flanges at H5 (Y = 2.25\") and H34 (Y = 16.75\") using outward-opening 3-Hole 1x2x1 C-Channels (3 - 2x C-Chan.f3d), then trap two 0.375\" OD Nylon Spacers + Teflon Washers onto #8-32 \u00d7 1.500\" axles at X = \u00b14.32\".",
+          tip: "Notice how opening the 3-hole C-channel brackets outward (flanges away from Stage 0) keeps Z = -0.50..+0.50 completely clear for the 0.98\" roller stack while giving box stiffness!",
+          bom: [
+            { group: 10, name: "1x2x1x3 Al C-Channel (S0 Guide Straddle Brackets)", qty: "8\u00d7", sku: "276-2289", f3d: "Structure/Aluminum/2x C-Channel/3 - 2x C-Chan.f3d", hole: "C-Chan H3 bolted to S0 H5 (2.25\") & H34 (16.75\")", focus: { yaw: 0.50, pitch: 0.24, dist: 14, tx: 4.8, ty: 16.75, tz: 0 } },
+            { group: 11, name: "0.375\" OD Spacer, 0.375\" (Nylon, 2\u00d7 per Roller)", qty: "8\u00d7", sku: "276-6340", f3d: "Motion/Spacers/0.375 OD/0.375 OD Spacer, 0.375 (Nylon).f3d", hole: "Straddle Inner Hole #1 (X = \u00b14.32\", Z = 0.00\")", focus: { yaw: 0.42, pitch: 0.22, dist: 10, tx: 4.32, ty: 16.75, tz: 0 } },
+            { group: 12, name: "Teflon Washer, 0.03125\" (Ends of Roller Stack)", qty: "8\u00d7", sku: "275-1066", f3d: "Motion/Spacers/Washers/Teflon/Washer, 0.03125 (Teflon).f3d", hole: "Between Nylon Rollers and C-Channel Webs (Z = \u00b10.465\")", focus: { yaw: 0.42, pitch: 0.22, dist: 10, tx: 4.32, ty: 16.75, tz: 0 } }
+          ],
+          screws: [
+            { group: 0, pin: "S0 H5/34 \u2022 0.375\" Bracket", loc: "3-Hole C-Channel Web H3 -> S0 Tower Flanges", hole: "S0 Flanges H5 (Y=2.25\") & H34 (Y=16.75\"), Front & Back", size: "#8-32 \u00d7 0.375\" Star", nut: "Keps Nut (275-1026)", qty: "8\u00d7", sku: "276-4991", stack: "[Screw #8-32\u00d70.375\"] \u2192 [3-Hole C-Chan Web H3] \u2192 [S0 Tower Flange] \u2192 [Keps Nut Inside]", focus: { yaw: 0.48, pitch: 0.25, dist: 12, tx: 5.4, ty: 2.25, tz: 0.6 } },
+            { group: 1, pin: "Roller \u2022 1.500\" Axle", loc: "Linear Roller Thru-Bolt across Z = \u00b10.56\" at X = \u00b14.32\"", hole: "3-Hole C-Channel Web H1 (X=\u00b14.32\", Y=2.25\" & 16.75\")", size: "#8-32 \u00d7 1.500\" Star", nut: "Nylock Nut (275-1027)", qty: "4\u00d7", sku: "276-4998", stack: "[Screw #8-32\u00d71.500\"] \u2192 [F-CChan] \u2192 [Teflon] \u2192 [2\u00d7Nylon] \u2192 [Teflon] \u2192 [R-CChan] \u2192 [Nylock]", focus: { yaw: 0.36, pitch: 0.22, dist: 10, tx: 4.32, ty: 16.75, tz: 0 } }
+          ]
+        },
+        {
+          id: 6,
+          title: "Stage 1 30-Hole C-Rails, 0.750\" Standoffs & 16-Hole C-Braces",
+          desc: "Drop Left & Right 30-hole (15.0\") 1x2x1 Stage 1 C-channels between Stage 0 Rollers at X = \u00b13.85\". Connect rear flanges via four 0.750\" Hex Standoffs and two 16-hole Cross-Braces at Stage 1 Hole #1 (Y_local = 1.00\") and Hole #29 (Y_local = 15.00\").",
+          tip: "Double web hole rows are visible on every Stage 1 C-channel face, lining up directly on the 0.500\" VEX grid.",
+          bom: [
+            { group: 10, name: "1x2x1x30 Al C-Channel (15.0\" Stage 1 Rail)", qty: "2\u00d7", sku: "276-2289", f3d: "Structure/Aluminum/2x C-Channel/30 - 2x C-Chan.f3d", hole: "X = \u00b13.85\", Y_local = 0.75\"..15.75\" (Between S0 Rollers)", focus: { yaw: -0.68, pitch: 0.24, dist: 27, tx: 0, ty: 8.5 + s1, tz: 0 } },
+            { group: 11, name: "0.750\" Standoff (8-32, Aluminum Hex)", qty: "4\u00d7", sku: "275-1015", f3d: "Hardware/Standoffs/0.750 Standoff (8-32, Aluminum).f3d", hole: "S1 Rear Flange Hole #1 (1.00\") & Hole #29 (15.00\")", focus: { yaw: -2.05, pitch: 0.22, dist: 14, tx: 3.85, ty: 15.0 + s1, tz: -1.0 } },
+            { group: 12, name: "1x2x1x16 Al C-Channel (8.0\" Stage 1 Cross-Brace)", qty: "2\u00d7", sku: "276-2289", f3d: "Structure/Aluminum/2x C-Channel/16 - 2x C-Chan.f3d", hole: "16-Hole Brace Ends (H1 & H16 @ X=\u00b13.85\", Z=-1.502\")", focus: { yaw: -2.45, pitch: 0.26, dist: 20, tx: 0, ty: 15.0 + s1, tz: -1.5 } }
+          ],
+          screws: [
+            { group: 0, pin: "S1 H1/29 \u2022 0.375\" Front", loc: "S1 Rear Flange -> Front of 0.750\" Standoff", hole: "S1 Holes #1 (Y_local=1.00\") & #29 (Y_local=15.00\")", size: "#8-32 \u00d7 0.375\" Star", nut: "Standoff Internal Thread", qty: "4\u00d7", sku: "276-4991", stack: "[Screw #8-32\u00d70.375\" Rearward] \u2192 [S1 Rear Flange] \u2192 [0.750\" Standoff Front]", focus: { yaw: -0.95, pitch: 0.20, dist: 13, tx: 3.85, ty: 15.0 + s1, tz: -0.5 } },
+            { group: 1, pin: "S1 Brace \u2022 0.375\" Back", loc: "16-Hole S1 C-Braces -> Back of 0.750\" Standoff", hole: "Brace End Web Holes #1 & #16 (Z=-1.307\")", size: "#8-32 \u00d7 0.375\" Star", nut: "Standoff Internal Thread", qty: "4\u00d7", sku: "276-4991", stack: "[Screw #8-32\u00d70.375\" Forward] \u2192 [16-Hole C-Brace Web] \u2192 [0.750\" Standoff Back]", focus: { yaw: -2.35, pitch: 0.22, dist: 13, tx: 3.85, ty: 15.0 + s1, tz: -1.3 } }
+          ]
+        },
+        {
+          id: 7,
+          title: "Stage 1 Idler Sprockets, Chain & Spaced 3-Hole C-Chan Rollers",
+          desc: "Bolt HS Bearing Flats & Bronze-Insert 12T - 9P Idler Sprockets at H2 (Y_local = 1.50\") and H28 (Y_local = 14.50\"). Stand off eight 3-Hole 1x2x1 C-Channel Guide Brackets (3 - 2x C-Chan.f3d) by 0.32\" OD Nylon Spacers outside S1 chain (Z = \u00b11.08\") at Y_local = 2.35\" & 13.95\".",
+          tip: "Spacing the 3-Hole 1x2x1 C-Channel brackets out to Z = \u00b11.08\" with 0.313\" OD spacers clears the Stage 1 9P chain runs (Z = \u00b10.72\") completely with zero collision while giving C-channel rigidity!",
+          bom: [
+            { group: 10, name: "High Strength Bearing Flat + 1.500\" HS Stub Shafts", qty: "4\u00d7 each", sku: "276-3521", f3d: "Motion/Bearings/High Strength Bearing Flat.f3d", hole: "S1 Inner Web H2 (Y_local=1.50\") & H28 (Y_local=14.50\")", focus: { yaw: 0.85, pitch: 0.22, dist: 13, tx: 3.8, ty: 14.5 + s1, tz: 0 } },
+            { group: 11, name: "12T Sprocket - 9P + HS Round Insert (Bronze)", qty: "4\u00d7 each", sku: "276-3877", f3d: "Motion/Inserts/HS Round Insert (Bronze).f3d", hole: "Centered X = \u00b13.20\", Y_local = 1.50\" & 14.50\", Z = 0.00\"", focus: { yaw: 0.55, pitch: 0.22, dist: 13, tx: 3.2, ty: 14.5 + s1, tz: 0 } },
+            { group: 12, name: "1x2x1x3 C-Chan + 0.313\"/0.375\" Spacers + 9P Chain", qty: "8\u00d7 + set", sku: "276-2289", f3d: "Structure/Aluminum/2x C-Channel/3 - 2x C-Chan.f3d", hole: "Spaced at Z = \u00b11.08\", Rollers at X = \u00b12.84\", Y = 2.35\" & 13.95\"", focus: { yaw: 0.45, pitch: 0.22, dist: 13, tx: 3.1, ty: 13.95 + s1, tz: 0.4 } }
+          ],
+          screws: [
+            { group: 0, pin: "S1 H1/3 & 27/29 \u2022 0.500\"", loc: "HS Bearing Flats -> S1 Rail Outer Web", hole: "S1 Holes #1/#3 (1.00\"/2.00\") & #27/#29 (14.00\"/15.00\")", size: "#8-32 \u00d7 0.500\" Star", nut: "Nylock Nut (275-1027)", qty: "8\u00d7", sku: "276-4992", stack: "[Screw #8-32\u00d70.500\" Inward] \u2192 [S1 Web] \u2192 [HS Bearing Flat] \u2192 [Nylock Nut]", focus: { yaw: 1.35, pitch: 0.20, dist: 12, tx: 4.0, ty: 14.5 + s1, tz: 0 } },
+            { group: 1, pin: "S1 Straddle \u2022 0.750\" Standoff", loc: "3-Hole C-Chan H3 -> 0.32\" Spacer -> S1 Flange", hole: "Y_local = 2.35\" & 13.95\", X=\u00b13.85\", Z=\u00b10.88\"", size: "#8-32 \u00d7 0.750\" Star", nut: "Nylock Nut (275-1027)", qty: "8\u00d7", sku: "276-4994", stack: "[Screw #8-32\u00d70.750\"] \u2192 [3-Hole C-Chan] \u2192 [0.313\" Spacer] \u2192 [S1 Flange] \u2192 [Nylock]", focus: { yaw: 0.52, pitch: 0.22, dist: 12, tx: 3.85, ty: 13.95 + s1, tz: 0.9 } },
+            { group: 2, pin: "S1 Roller \u2022 2.000\" Axle", loc: "Stage 1 Wide Guide Roller Axle at X = \u00b12.84\"", hole: "3-Hole C-Chan Tip H1 (Z = \u00b10.88\", Y_local = 2.35\" & 13.95\")", size: "#8-32 \u00d7 2.000\" Star", nut: "Nylock Nut (275-1027)", qty: "4\u00d7", sku: "276-4999", stack: "[Screw #8-32\u00d72.000\"] \u2192 [F-CChan] \u2192 [1.64\" Rollers] \u2192 [R-CChan] \u2192 [Nylock]", focus: { yaw: 0.35, pitch: 0.20, dist: 11, tx: 2.84, ty: 13.95 + s1, tz: 0 } }
+          ]
+        },
+        {
+          id: 8,
+          title: "Stage 2 24-Hole C-Carriage + 8-Hole C-Braces & 90\u00b0 Gussets",
+          desc: "Drop Left & Right 24-hole (12.0\") Stage 2 C-Channels inside Stage 1 Rollers at X = \u00b12.40\". Bolt top and bottom 8-hole Cross-Braces (Holes #2 & #23 of Stage 2 = Y_local 1.75\" & 12.25\") reinforced internally with four 90\u00b0 Flat Gussets.",
+          tip: "Pure cascade carriage only — front carriage faces stay flat and clear with zero extra attachments.",
+          bom: [
+            { group: 10, name: "1x2x1x24 Al C-Channel (12.0\" Stage 2 Rail)", qty: "2\u00d7", sku: "276-2289", f3d: "Structure/Aluminum/2x C-Channel/24 - 2x C-Chan.f3d", hole: "X = \u00b12.40\", Y_local = 1.00\"..13.00\"", focus: { yaw: 0.38, pitch: 0.24, dist: 23, tx: 0, ty: 7.0 + s2, tz: 0 } },
+            { group: 11, name: "1x2x1x8 Al C-Channel (4.0\" Carriage Braces)", qty: "2\u00d7", sku: "276-2289", f3d: "Structure/Aluminum/2x C-Channel/8 - 2x C-Chan.f3d", hole: "Stage 2 Holes #2 (1.75\") & #23 (12.25\")", focus: { yaw: 0.32, pitch: 0.24, dist: 15, tx: 0, ty: 12.25 + s2, tz: 0 } },
+            { group: 12, name: "90-Degree Flat Gusset (Internal Corner Bracing)", qty: "4\u00d7", sku: "276-2577", f3d: "Structure/Gussets/90 Degrees/90 Degree Flat Gusset.f3d", hole: "Carriage Corners Z = +0.28\"", focus: { yaw: 0.25, pitch: 0.22, dist: 11, tx: 2.0, ty: 12.25 + s2, tz: 0.2 } }
+          ],
+          screws: [
+            { group: 0, pin: "S2 H2/23 \u2022 0.375\" Brace", loc: "8-Hole Cross-Brace Ends -> S2 Rail Inner Web", hole: "S2 Holes #2 (Y_local=1.75\") & #23 (12.25\")", size: "#8-32 \u00d7 0.375\" Star", nut: "Nylock Nut (275-1027)", qty: "8\u00d7", sku: "276-4991", stack: "[Screw #8-32\u00d70.375\" Outward] \u2192 [8-Hole Brace Flange] \u2192 [S2 Inner Web] \u2192 [Nylock]", focus: { yaw: 0.35, pitch: 0.24, dist: 13, tx: 2.1, ty: 12.25 + s2, tz: 0 } },
+            { group: 1, pin: "S2 Gusset \u2022 0.375\"", loc: "90\u00b0 Flat Gussets -> S2 Rail Front Flange & Brace", hole: "S2 Corner Gussets (Y_local=1.75\" & 12.25\", Z=+0.45\")", size: "#8-32 \u00d7 0.375\" Star", nut: "Nylock Nut (275-1027)", qty: "8\u00d7", sku: "276-4991", stack: "[Screw #8-32\u00d70.375\" Rearward] \u2192 [90\u00b0 Gusset] \u2192 [S2 Top Flange] \u2192 [Nylock]", focus: { yaw: 0.20, pitch: 0.22, dist: 11, tx: 2.0, ty: 12.25 + s2, tz: 0.35 } }
+          ]
+        },
+        {
+          id: 9,
+          title: "All-Chain Coupling: 5-Hole C-Chan Anchor & Flap Links",
+          desc: "Rig all 3 zero-string cascade chain couplings per side: (A) S1 1.88\" Drive Standoff (Y_local = 3.25\") -> S0 Front Chain Flap Link; (B) 5-Hole 1x2x1 C-Channel Anchor Bridge (5 - 2x C-Chan.f3d, Y = 12.90\", Z = -1.11\") off S0 Standoff -> S1 Back Chain Flap Link; (C) S2 (Y_local = 3.60\") 0.313\" Spacer -> S1 Front Chain Flap Link.",
+          tip: "Using a real 5-Hole 1x2x1 C-Channel Anchor Bridge off Stage 0 gives rigid box stiffness to resist full Stage 1 chain pull with zero twisting.",
+          bom: [
+            { group: 10, name: "Screw Flap Link (9P High Strength Chain)", qty: "6\u00d7", sku: "276-7578", f3d: "Motion/Chain Links/9P (High Strength Chain)/Screw Flap Link (9P).f3d", hole: "S0 Front Chain / S1 Back Chain / S1 Front Chain", focus: { yaw: -1.10, pitch: 0.20, dist: 21, tx: 3.5, ty: 7.5 + s1, tz: -1.0 } },
+            { group: 11, name: "1x2x1x5 C-Channel Anchor + 1.88\" / 0.250\" Standoffs", qty: "2\u00d7 + set", sku: "276-2289", f3d: "Structure/Aluminum/2x C-Channel/5 - 2x C-Chan.f3d", hole: "Anchor Bridge Y=12.90\"; S1 Drive Y_local=3.25\"", focus: { yaw: -2.35, pitch: 0.22, dist: 14, tx: 4.3, ty: 12.90, tz: -1.0 } },
+            { group: 12, name: "0.313\" OD Spacer, 0.250\" (Nylon, Stage 2 Drive)", qty: "2\u00d7", sku: "276-6340", f3d: "Motion/Spacers/0.313 OD/0.313 OD Spacer, 0.250 (Nylon).f3d", hole: "S2 Front Flange (Y_local = 3.60\", X = \u00b12.40\")", focus: { yaw: 0.35, pitch: 0.18, dist: 12, tx: 2.6, ty: 3.60 + s2, tz: 0.7 } }
+          ],
+          screws: [
+            { group: 0, pin: "(A) S1 \u2022 0.500\" Drive", loc: "S0 Front Chain Flap Link -> 1.88\" Drive Standoff -> S1 Flange", hole: "S1 Rear Flange (Y_local = 3.25\", X=\u00b13.85\", Z=-2.53\")", size: "#8-32 \u00d7 0.500\" Star", nut: "Nylock + Standoff", qty: "4\u00d7", sku: "276-4992", stack: "[Screw #8-32\u00d70.500\" Inward] \u2192 [S0 Flap Link] \u2192 [1.88\" Standoff] \u2192 [S1 Rear Flange]", focus: { yaw: -1.25, pitch: 0.20, dist: 12, tx: 4.1, ty: 3.25 + s1, tz: -2.0 } },
+            { group: 1, pin: "(B) 5x C-Chan \u2022 0.750\" Anc", loc: "S0 -> 0.250\" Standoff -> 5-Hole C-Channel -> S1 Back Chain", hole: "S0 Y=12.90\": Outer H5 (X=\u00b15.50\"), Inner H1 (X=\u00b13.20\")", size: "#8-32 \u00d7 0.750\" Star", nut: "Nylock Nut (275-1027)", qty: "4\u00d7", sku: "276-4994", stack: "[Screw] \u2192 [5-Hole C-Chan Web] \u2192 [S1 Back Chain Flap Link (Z=-0.835\")] \u2192 [Nylock]", focus: { yaw: -2.35, pitch: 0.22, dist: 12, tx: 4.2, ty: 12.90, tz: -1.1 } },
+            { group: 2, pin: "(C) S2 \u2022 0.750\" S2 Link", loc: "S2 Rail -> 0.313\" Spacer -> S1 Front Chain Flap Link", hole: "S2 Y_local=3.60\": X=\u00b12.40\" Spacer, X=\u00b12.86\" Flap", size: "#8-32 \u00d7 0.750\" Star", nut: "Nylock Nut (275-1027)", qty: "4\u00d7", sku: "276-4994", stack: "[Screw #8-32\u00d70.750\" Rearward] \u2192 [S1 Flap Link] \u2192 [0.313\" Spacer] \u2192 [S2 Flange] \u2192 [Nylock]", focus: { yaw: 0.35, pitch: 0.18, dist: 11, tx: 2.6, ty: 3.60 + s2, tz: 0.7 } }
+          ]
+        },
+        {
+          id: 10,
+          title: "#64 Rubber Band Counterbalance Assist",
+          desc: "Bolt two 4.000\" Standoffs onto Stage 0 Top Brace (X = \u00b13.40\") and two 0.750\" Standoffs onto Stage 1 Bottom Brace (X = \u00b13.40\"). Hook dual #64 Latex Bands vertically at Z = -2.40\" to passively offset stage gravity.",
+          tip: "Upper standoffs install from BEHIND S0 Top Brace web going forward; lower standoffs install from INSIDE Stage 1 Bottom Brace web going rearward.",
+          bom: [
+            { group: 10, name: "4.000\" Standoff (Upper S0 Brace Band Post)", qty: "2\u00d7", sku: "275-1021", f3d: "Hardware/Standoffs/4.000 Standoff (8-32, Aluminum).f3d", hole: "S0 Top Brace Holes #6 & #19 (X=\u00b13.40\", Y=15.75\")", focus: { yaw: -2.60, pitch: 0.25, dist: 15, tx: 3.4, ty: 15.75, tz: -5.0 } },
+            { group: 11, name: "0.750\" Standoff (Lower S1 Brace Band Post)", qty: "2\u00d7", sku: "275-1015", f3d: "Hardware/Standoffs/0.750 Standoff (8-32, Aluminum).f3d", hole: "S1 Bottom Brace Holes #2 & #15 (X=\u00b13.40\", Y=1.00\"+s1)", focus: { yaw: -2.55, pitch: 0.22, dist: 14, tx: 3.4, ty: 1.5 + s1, tz: -2.0 } },
+            { group: 12, name: "Synthetic Rubber Band #64 (Dual Strands/Side)", qty: "4\u00d7", sku: "276-3990", f3d: "Consumable Latex Elastic (#64)", hole: "Stretched vertically along Z = -2.40\" at X = \u00b13.40\"", focus: { yaw: -2.65, pitch: 0.24, dist: 26, tx: 0, ty: 8.5, tz: -3.2 } }
+          ],
+          screws: [
+            { group: 0, pin: "Top H6/19 \u2022 0.500\" Up", loc: "S0 Upper Brace Web -> 4.000\" Standoff", hole: "S0 Top Brace Y=15.75\", X=\u00b13.40\", Z=-6.56\"", size: "#8-32 \u00d7 0.500\" Star", nut: "Standoff Internal Thread", qty: "2\u00d7", sku: "276-4992", stack: "[Screw #8-32\u00d70.500\" Forward] \u2192 [S0 Top Brace Web] \u2192 [4.000\" Standoff Rear]", focus: { yaw: -2.75, pitch: 0.24, dist: 13, tx: 3.4, ty: 15.75, tz: -6.2 } },
+            { group: 1, pin: "Bot H2/15 \u2022 0.500\" Lo", loc: "S1 Lower Brace Web -> 0.750\" Standoff", hole: "S1 Bottom Brace Y=1.00\"+s1, X=\u00b13.40\", Z=-1.70\"", size: "#8-32 \u00d7 0.500\" Star", nut: "Standoff Internal Thread", qty: "2\u00d7", sku: "276-4992", stack: "[Screw #8-32\u00d70.500\" Rearward] \u2192 [S1 Bot Brace] \u2192 [0.750\" Standoff Front]", focus: { yaw: -2.40, pitch: 0.22, dist: 13, tx: 3.4, ty: 1.5 + s1, tz: -2.0 } }
+          ]
+        }
+      ];
+    }
+
+    // =========================================================================
+    // 3. MATH & WEBGL RENDERER UTILITIES
+    // =========================================================================
+    function mat4Mul(a, b) {
+      const out = new Float32Array(16);
+      for (let c = 0; c < 4; c++) {
+        for (let r = 0; r < 4; r++) {
+          out[c * 4 + r] =
+            a[0 * 4 + r] * b[c * 4 + 0] +
+            a[1 * 4 + r] * b[c * 4 + 1] +
+            a[2 * 4 + r] * b[c * 4 + 2] +
+            a[3 * 4 + r] * b[c * 4 + 3];
+        }
+      }
+      return out;
+    }
+
+    function mat4Perspective(fovY, aspect, near, far) {
+      const f = 1.0 / Math.tan(fovY * 0.5);
+      const nf = 1.0 / (near - far);
+      const m = new Float32Array(16);
+      m[0] = f / Math.max(aspect, 0.01);
+      m[5] = f;
+      m[10] = (far + near) * nf;
+      m[11] = -1;
+      m[14] = 2 * far * near * nf;
+      return m;
+    }
+
+    function buildViewMatrix(cam) {
+      const cp = Math.cos(cam.pitch), sp = Math.sin(cam.pitch);
+      const cy = Math.cos(cam.yaw), sy = Math.sin(cam.yaw);
+      const fx = cp * sy, fy = sp, fz = cp * cy;
+      const ex = cam.tx + cam.dist * fx;
+      const ey = cam.ty + cam.dist * fy;
+      const ez = cam.tz + cam.dist * fz;
+
+      const fwdX = -fx, fwdY = -fy, fwdZ = -fz;
+      const rx = cy, ry = 0, rz = -sy;
+      const ux = ry * fwdZ - rz * fwdY;
+      const uy = rz * fwdX - rx * fwdZ;
+      const uz = rx * fwdY - ry * fwdX;
+
+      const v = new Float32Array(16);
+      v[0] = rx;   v[4] = ry;   v[8]  = rz;   v[12] = -(rx * ex + ry * ey + rz * ez);
+      v[1] = ux;   v[5] = uy;   v[9]  = uz;   v[13] = -(ux * ex + uy * ey + uz * ez);
+      v[2] = fx;   v[6] = fy;   v[10] = fz;   v[14] = -(fx * ex + fy * ey + fz * ez);
+      v[3] = 0;    v[7] = 0;    v[11] = 0;    v[15] = 1;
+      return v;
+    }
+
+    function transformPointM4(m, x, y, z) {
+      return [
+        m[0] * x + m[4] * y + m[8]  * z + m[12],
+        m[1] * x + m[5] * y + m[9]  * z + m[13],
+        m[2] * x + m[6] * y + m[10] * z + m[14],
+        m[3] * x + m[7] * y + m[11] * z + m[15]
+      ];
+    }
+
+    let tiltCos = 1.0, tiltSin = 0.0;
+    function setTiltAngle(rad) { tiltCos = Math.cos(rad); tiltSin = Math.sin(rad); }
+    function applyTilt(x, y, z) {
+      if (tiltSin === 0.0) return [x, y, z];
+      return [x, y * tiltCos - z * tiltSin, y * tiltSin + z * tiltCos];
+    }
+    function applyTiltNorm(nx, ny, nz) {
+      if (tiltSin === 0.0) return [nx, ny, nz];
+      return [nx, ny * tiltCos - nz * tiltSin, ny * tiltSin + nz * tiltCos];
+    }
+
+    class GeoBatch {
+      constructor(capVerts) {
+        this.cap = capVerts;
+        this.data = new Float32Array(capVerts * 10);
+        this.count = 0;
+      }
+      reset() { this.count = 0; }
+      ensure(extra) {
+        if (this.count + extra <= this.cap) return;
+        let newCap = this.cap * 2;
+        while (newCap < this.count + extra) newCap *= 2;
+        const next = new Float32Array(newCap * 10);
+        next.set(this.data.subarray(0, this.count * 10));
+        this.data = next;
+        this.cap = newCap;
+      }
+      pushVertRaw(x, y, z, nx, ny, nz, r, g, b, a) {
+        const i = this.count * 10;
+        const d = this.data;
+        d[i] = x; d[i+1] = y; d[i+2] = z;
+        d[i+3] = nx; d[i+4] = ny; d[i+5] = nz;
+        d[i+6] = r; d[i+7] = g; d[i+8] = b; d[i+9] = a;
+        this.count++;
+      }
+      pushTri(p0, p1, p2, n, col, worldSpace) {
+        this.ensure(3);
+        let q0 = p0, q1 = p1, q2 = p2, qn = n;
+        if (!worldSpace && tiltSin !== 0.0) {
+          q0 = applyTilt(p0[0], p0[1], p0[2]);
+          q1 = applyTilt(p1[0], p1[1], p1[2]);
+          q2 = applyTilt(p2[0], p2[1], p2[2]);
+          qn = applyTiltNorm(n[0], n[1], n[2]);
+        }
+        const [r, g, b, a] = col;
+        this.pushVertRaw(q0[0], q0[1], q0[2], qn[0], qn[1], qn[2], r, g, b, a);
+        this.pushVertRaw(q1[0], q1[1], q1[2], qn[0], qn[1], qn[2], r, g, b, a);
+        this.pushVertRaw(q2[0], q2[1], q2[2], qn[0], qn[1], qn[2], r, g, b, a);
+      }
+      pushQuad(p0, p1, p2, p3, n, col, worldSpace) {
+        this.pushTri(p0, p1, p2, n, col, worldSpace);
+        this.pushTri(p0, p2, p3, n, col, worldSpace);
+      }
+      pushLine(p0, p1, col, worldSpace) {
+        this.ensure(2);
+        let q0 = p0, q1 = p1;
+        if (!worldSpace && tiltSin !== 0.0) {
+          q0 = applyTilt(p0[0], p0[1], p0[2]);
+          q1 = applyTilt(p1[0], p1[1], p1[2]);
+        }
+        const [r, g, b, a] = col;
+        this.pushVertRaw(q0[0], q0[1], q0[2], 0, 1, 0, r, g, b, a);
+        this.pushVertRaw(q1[0], q1[1], q1[2], 0, 1, 0, r, g, b, a);
+      }
+    }
+
+    const cadGlCanvas = document.getElementById("cad-gl");
+    const cadOverlay = document.getElementById("cad-overlay");
+    const gl = cadGlCanvas.getContext("webgl", { antialias: true, alpha: false, depth: true });
+    const ctx2d = cadOverlay.getContext("2d");
+
+    if (!gl) {
+      ctx2d.fillStyle = "#ef4444";
+      ctx2d.font = "16px sans-serif";
+      ctx2d.fillText("WebGL context unavailable.", 24, 40);
+      return;
+    }
+
+    const vsSrc = `
+      attribute vec3 aPos;
+      attribute vec3 aNorm;
+      attribute vec4 aCol;
+      uniform mat4 uMVP;
+      uniform float uApplyNorm;
+      varying vec4 vCol;
+      void main() {
+        gl_Position = uMVP * vec4(aPos, 1.0);
+        if (uApplyNorm > 0.5) {
+          vec3 n = normalize(aNorm);
+          vec3 l1 = normalize(vec3(0.45, 0.82, 0.62));
+          vec3 l2 = normalize(vec3(-0.55, 0.28, -0.45));
+          float d1 = max(dot(n, l1), 0.0);
+          float d2 = max(dot(n, l2), 0.0);
+          float shade = 0.50 + 0.38 * d1 + 0.16 * d2;
+          vCol = vec4(clamp(aCol.rgb * shade, 0.0, 1.0), aCol.a);
+        } else {
+          vCol = aCol;
+        }
+      }
+    `;
+    const fsSrc = `
+      precision mediump float;
+      varying vec4 vCol;
+      void main() {
+        gl_FragColor = vCol;
+      }
+    `;
+
+    function compileShader(type, src) {
+      const sh = gl.createShader(type);
+      gl.shaderSource(sh, src);
+      gl.compileShader(sh);
+      if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(sh));
+      return sh;
+    }
+    const prog = gl.createProgram();
+    gl.attachShader(prog, compileShader(gl.VERTEX_SHADER, vsSrc));
+    gl.attachShader(prog, compileShader(gl.FRAGMENT_SHADER, fsSrc));
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog));
+    gl.useProgram(prog);
+
+    const aPosLoc = gl.getAttribLocation(prog, "aPos");
+    const aNormLoc = gl.getAttribLocation(prog, "aNorm");
+    const aColLoc = gl.getAttribLocation(prog, "aCol");
+    const uMVPLoc = gl.getUniformLocation(prog, "uMVP");
+    const uApplyNormLoc = gl.getUniformLocation(prog, "uApplyNorm");
+
+    const vboOpaque = gl.createBuffer();
+    const vboHoles  = gl.createBuffer();
+    const vboLines  = gl.createBuffer();
+    const vboTrans  = gl.createBuffer();
+
+    const batchOpaque = new GeoBatch(48000);
+    const batchHoles  = new GeoBatch(36000);
+    const batchLines  = new GeoBatch(38000);
+    const batchTrans  = new GeoBatch(14000);
+
+    // =========================================================================
+    // 4. HIGH-FIDELITY VEX C-CHANNEL BUILDERS (2x & 5x W/ MULTI-ROW WEB HOLES)
+    // =========================================================================
+    const EDGE_COL     = [0.10, 0.14, 0.22, 0.90];
+    const EDGE_GHOST   = [0.24, 0.28, 0.34, 0.42];
+    const EDGE_HILITE  = [0.96, 0.62, 0.04, 1.00];
+    const EDGE_SPOT    = [0.04, 0.86, 0.96, 1.00];
+    const HOLE_COL     = [0.11, 0.14, 0.19, 1.00];
+    const INSERT_STL   = [0.66, 0.70, 0.76];
+    const INSERT_BRZ   = [0.76, 0.56, 0.24];
+    const TEFLON_WHT   = [0.96, 0.97, 0.99];
+    const NYLOCK_BLU   = [0.16, 0.44, 0.85];
+
+    function shadeCol(rgb, alpha, opts) {
+      if (opts && opts.spot) {
+        return [
+          Math.min(1.0, rgb[0] * 0.45 + 0.06 * 0.55),
+          Math.min(1.0, rgb[1] * 0.45 + 0.86 * 0.55),
+          Math.min(1.0, rgb[2] * 0.45 + 0.96 * 0.55),
+          alpha
+        ];
+      }
+      if (opts && opts.hi) {
+        return [
+          Math.min(1.0, rgb[0] * 0.76 + 0.98 * 0.24),
+          Math.min(1.0, rgb[1] * 0.76 + 0.72 * 0.24),
+          Math.min(1.0, rgb[2] * 0.76 + 0.16 * 0.24),
+          alpha
+        ];
+      }
+      if (opts && opts.ghost) {
+        const lum = rgb[0] * 0.3 + rgb[1] * 0.59 + rgb[2] * 0.11;
+        const m = state.isDark ? 0.46 : 0.65;
+        return [lum * m, lum * m, lum * m + 0.02, alpha];
+      }
+      return [rgb[0], rgb[1], rgb[2], alpha];
+    }
+
+    function pickEdgeCol(opts) {
+      if (opts && opts.spot) return EDGE_SPOT;
+      if (opts && opts.hi) return EDGE_HILITE;
+      if (opts && opts.ghost) return EDGE_GHOST;
+      return (opts && opts.edgeCol) || EDGE_COL;
+    }
+
+    function addBox(cx, cy, cz, sx, sy, sz, rgb, opts) {
+      opts = opts || {};
+      const alpha = opts.alpha !== undefined ? opts.alpha : 1.0;
+      const trans = alpha < 0.99;
+      const target = trans ? batchTrans : batchOpaque;
+      const col = shadeCol(rgb, alpha, opts);
+      const edgeCol = pickEdgeCol(opts);
+      const hx = sx * 0.5, hy = sy * 0.5, hz = sz * 0.5;
+      const x0 = cx - hx, x1 = cx + hx;
+      const y0 = cy - hy, y1 = cy + hy;
+      const z0 = cz - hz, z1 = cz + hz;
+
+      const c000 = [x0, y0, z0], c100 = [x1, y0, z0], c110 = [x1, y1, z0], c010 = [x0, y1, z0];
+      const c001 = [x0, y0, z1], c101 = [x1, y0, z1], c111 = [x1, y1, z1], c011 = [x0, y1, z1];
+
+      target.pushQuad(c001, c101, c111, c011, [ 0,  0,  1], col);
+      target.pushQuad(c100, c000, c010, c110, [ 0,  0, -1], col);
+      target.pushQuad(c101, c100, c110, c111, [ 1,  0,  0], col);
+      target.pushQuad(c000, c001, c011, c010, [-1,  0,  0], col);
+      target.pushQuad(c011, c111, c110, c010, [ 0,  1,  0], col);
+      target.pushQuad(c000, c100, c101, c001, [ 0, -1,  0], col);
+
+      if (!opts.noEdges) {
+        const ec = trans ? [edgeCol[0], edgeCol[1], edgeCol[2], Math.min(0.45, edgeCol[3])] : edgeCol;
+        const pairs = [
+          [c000, c100], [c100, c110], [c110, c010], [c010, c000],
+          [c001, c101], [c101, c111], [c111, c011], [c011, c001],
+          [c000, c001], [c100, c101], [c110, c111], [c010, c011]
+        ];
+        for (let k = 0; k < 12; k++) batchLines.pushLine(pairs[k][0], pairs[k][1], ec);
+      }
+    }
+
+    // Horizontal C-Channel along X (web on top/bottom, flanges vertical 0.50") -> e.g. 5x25 Base & 2x25 Base Skids
+    function addCChannelXHoriz(cx, cy, cz, holes, widthRows, openY, rgb, opts) {
+      opts = opts || {};
+      const len = holes * 0.5, widthZ = widthRows * 0.5, t = 0.055;
+      addBox(cx, cy, cz + widthZ * 0.5 - t * 0.5, len, 0.50, t, rgb, opts);
+      addBox(cx, cy, cz - widthZ * 0.5 + t * 0.5, len, 0.50, t, rgb, opts);
+      const wy = cy + (openY > 0 ? -0.25 + t * 0.5 : 0.25 - t * 0.5);
+      addBox(cx, wy, cz, len, t, widthZ - 2 * t, rgb, opts);
+
+      if (!opts.transparent && !opts.noHoles) {
+        const xStart = cx - len * 0.5 + 0.25;
+        const zStart = cz - widthZ * 0.5 + 0.25;
+        const outY = openY > 0 ? cy - 0.25 : cy + 0.25;
+        const inY  = openY > 0 ? cy - 0.25 + t : cy + 0.25 - t;
+        const nyOut = openY > 0 ? -1 : 1;
+        const hs = 0.091;
+        const fz = cz + widthZ * 0.5, bz = cz - widthZ * 0.5;
+        for (let i = 0; i < holes; i++) {
+          const hx = xStart + i * 0.5;
+          for (let r = 0; r < widthRows; r++) {
+            const hz = zStart + r * 0.5;
+            batchHoles.pushQuad([hx-hs, outY, hz-hs], [hx+hs, outY, hz-hs], [hx+hs, outY, hz+hs], [hx-hs, outY, hz+hs], [0, nyOut, 0], HOLE_COL);
+            batchHoles.pushQuad([hx-hs, inY, hz+hs],  [hx+hs, inY, hz+hs],  [hx+hs, inY, hz-hs],  [hx-hs, inY, hz-hs],  [0, -nyOut, 0], HOLE_COL);
+          }
+          batchHoles.pushQuad([hx-hs, cy-hs, fz], [hx+hs, cy-hs, fz], [hx+hs, cy+hs, fz], [hx-hs, cy+hs, fz], [0, 0, 1], HOLE_COL);
+          batchHoles.pushQuad([hx+hs, cy-hs, bz], [hx-hs, cy-hs, bz], [hx-hs, cy+hs, bz], [hx+hs, cy+hs, bz], [0, 0, -1], HOLE_COL);
+        }
+      }
+    }
+
+    // Vertical C-Channel along Y (2-wide 1.00" web w/ TWO rows of square holes at z ± 0.25")
+    function addCChannelY(cx, cy, cz, holes, openX, rgb, opts) {
+      opts = opts || {};
+      const len = holes * 0.5, t = 0.055;
+      addBox(cx, cy, cz + 0.5 - t * 0.5, 0.50, len, t, rgb, opts);
+      addBox(cx, cy, cz - 0.5 + t * 0.5, 0.50, len, t, rgb, opts);
+      const wx = cx + (openX > 0 ? -0.25 + t * 0.5 : 0.25 - t * 0.5);
+      addBox(wx, cy, cz, t, len, 1.0 - 2 * t, rgb, opts);
+
+      if (!opts.transparent && !opts.noHoles) {
+        const yStart = cy - len * 0.5 + 0.25;
+        const outX = openX > 0 ? cx - 0.25 : cx + 0.25;
+        const inX  = openX > 0 ? cx - 0.25 + t : cx + 0.25 - t;
+        const nxOut = openX > 0 ? -1 : 1;
+        const hs = 0.091;
+        const fz = cz + 0.5, bz = cz - 0.5;
+        for (let i = 0; i < holes; i++) {
+          const hy = yStart + i * 0.5;
+          for (let rz of [-0.25, 0.25]) {
+            batchHoles.pushQuad([outX, hy-hs, cz+rz-hs], [outX, hy-hs, cz+rz+hs], [outX, hy+hs, cz+rz+hs], [outX, hy+hs, cz+rz-hs], [nxOut, 0, 0], HOLE_COL);
+            batchHoles.pushQuad([inX, hy-hs, cz+rz-hs],  [inX, hy+hs, cz+rz-hs],  [inX, hy+hs, cz+rz+hs],  [inX, hy-hs, cz+rz+hs],  [-nxOut, 0, 0], HOLE_COL);
+          }
+          batchHoles.pushQuad([cx-hs, hy-hs, fz], [cx+hs, hy-hs, fz], [cx+hs, hy+hs, fz], [cx-hs, hy+hs, fz], [0, 0, 1], HOLE_COL);
+          batchHoles.pushQuad([cx+hs, hy-hs, bz], [cx-hs, hy-hs, bz], [cx-hs, hy+hs, bz], [cx+hs, hy+hs, bz], [0, 0, -1], HOLE_COL);
+        }
+      }
+    }
+
+    // Horizontal C-Channel along X, web vertical (2-wide 1.00" web w/ TWO rows of square holes at y ± 0.25")
+    function addCChannelX(cx, cy, cz, holes, openZ, rgb, opts) {
+      opts = opts || {};
+      const len = holes * 0.5, t = 0.055;
+      addBox(cx, cy + 0.5 - t * 0.5, cz, len, t, 0.50, rgb, opts);
+      addBox(cx, cy - 0.5 + t * 0.5, cz, len, t, 0.50, rgb, opts);
+      const wz = cz + (openZ > 0 ? -0.25 + t * 0.5 : 0.25 - t * 0.5);
+      addBox(cx, cy, wz, len, 1.0 - 2 * t, t, rgb, opts);
+
+      if (!opts.transparent && !opts.noHoles) {
+        const xStart = cx - len * 0.5 + 0.25;
+        const outZ = openZ > 0 ? cz - 0.25 : cz + 0.25;
+        const inZ  = openZ > 0 ? cz - 0.25 + t : cz + 0.25 - t;
+        const nzOut = openZ > 0 ? -1 : 1;
+        const hs = 0.091;
+        for (let i = 0; i < holes; i++) {
+          const hx = xStart + i * 0.5;
+          for (let ry of [-0.25, 0.25]) {
+            batchHoles.pushQuad([hx-hs, cy+ry-hs, outZ], [hx+hs, cy+ry-hs, outZ], [hx+hs, cy+ry+hs, outZ], [hx-hs, cy+ry+hs, outZ], [0, 0, nzOut], HOLE_COL);
+            batchHoles.pushQuad([hx+hs, cy+ry-hs, inZ],  [hx-hs, cy+ry-hs, inZ],  [hx-hs, cy+ry+hs, inZ],  [hx+hs, cy+ry+hs, inZ],  [0, 0, -nzOut], HOLE_COL);
+          }
+          batchHoles.pushQuad([hx-hs, cy+0.5, cz-hs], [hx+hs, cy+0.5, cz-hs], [hx+hs, cy+0.5, cz+hs], [hx-hs, cy+0.5, cz+hs], [0, 1, 0], HOLE_COL);
+          batchHoles.pushQuad([hx-hs, cy-0.5, cz+hs], [hx+hs, cy-0.5, cz+hs], [hx+hs, cy-0.5, cz-hs], [hx-hs, cy-0.5, cz-hs], [0, -1, 0], HOLE_COL);
+        }
+      }
+    }
+
+    // Horizontal C-Channel along Z, web vertical along Y (supports 2x for Bearing Arms & 5x for Gearbox)
+    function addCChannelZ(cx, cy, cz, holes, heightRows, openX, rgb, opts) {
+      opts = opts || {};
+      const len = holes * 0.5, heightY = heightRows * 0.5, t = 0.055;
+      addBox(cx, cy + heightY * 0.5 - t * 0.5, cz, 0.50, t, len, rgb, opts);
+      addBox(cx, cy - heightY * 0.5 + t * 0.5, cz, 0.50, t, len, rgb, opts);
+      const wx = cx + (openX > 0 ? -0.25 + t * 0.5 : 0.25 - t * 0.5);
+      addBox(wx, cy, cz, t, heightY - 2 * t, len, rgb, opts);
+
+      if (!opts.transparent && !opts.noHoles) {
+        const zStart = cz - len * 0.5 + 0.25;
+        const yStart = cy - heightY * 0.5 + 0.25;
+        const outX = openX > 0 ? cx - 0.25 : cx + 0.25;
+        const inX  = openX > 0 ? cx - 0.25 + t : cx + 0.25 - t;
+        const nxOut = openX > 0 ? -1 : 1;
+        const hs = 0.091;
+        const topY = cy + heightY * 0.5, botY = cy - heightY * 0.5;
+        for (let i = 0; i < holes; i++) {
+          const hz = zStart + i * 0.5;
+          for (let r = 0; r < heightRows; r++) {
+            const hy = yStart + r * 0.5;
+            batchHoles.pushQuad([outX, hy-hs, hz-hs], [outX, hy-hs, hz+hs], [outX, hy+hs, hz+hs], [outX, hy+hs, hz-hs], [nxOut, 0, 0], HOLE_COL);
+            batchHoles.pushQuad([inX, hy-hs, hz-hs],  [inX, hy+hs, hz-hs],  [inX, hy+hs, hz+hs],  [inX, hy-hs, hz+hs],  [-nxOut, 0, 0], HOLE_COL);
+          }
+          batchHoles.pushQuad([cx-hs, topY, hz-hs], [cx+hs, topY, hz-hs], [cx+hs, topY, hz+hs], [cx-hs, topY, hz+hs], [0, 1, 0], HOLE_COL);
+          batchHoles.pushQuad([cx-hs, botY, hz+hs], [cx+hs, botY, hz+hs], [cx+hs, botY, hz-hs], [cx-hs, botY, hz-hs], [0, -1, 0], HOLE_COL);
+        }
+      }
+    }
+
+    function addCylinder(cx, cy, cz, radius, length, axis, segs, rgb, opts) {
+      opts = opts || {};
+      const alpha = opts.alpha !== undefined ? opts.alpha : 1.0;
+      const col = shadeCol(rgb, alpha, opts);
+      const target = alpha < 0.99 ? batchTrans : batchOpaque;
+      const edgeCol = pickEdgeCol(opts);
+      const hl = length * 0.5;
+      const rot = opts.rot || 0;
+      const toothDepth = opts.toothDepth || 0;
+      const teeth = opts.teeth || 0;
+
+      function pt(tAng, r, side) {
+        const ca = Math.cos(tAng), sa = Math.sin(tAng);
+        if (axis === "x") return [cx + side * hl, cy + r * ca, cz + r * sa];
+        if (axis === "y") return [cx + r * ca, cy + side * hl, cz + r * sa];
+        return [cx + r * ca, cy + r * sa, cz + side * hl];
+      }
+      function radAt(k) { return !teeth ? radius : ((k % 2 === 0) ? radius : (radius - toothDepth)); }
+
+      const steps = teeth ? teeth * 2 : segs;
+      const nPos = axis === "x" ? [1,0,0] : (axis === "y" ? [0,1,0] : [0,0,1]);
+      const nNeg = [-nPos[0], -nPos[1], -nPos[2]];
+
+      for (let k = 0; k < steps; k++) {
+        const a0 = rot + (k / steps) * Math.PI * 2;
+        const a1 = rot + ((k + 1) / steps) * Math.PI * 2;
+        const r0 = radAt(k), r1 = radAt(k + 1), am = 0.5 * (a0 + a1);
+        let nx = 0, ny = 0, nz = 0;
+        if (axis === "x") { ny = Math.cos(am); nz = Math.sin(am); }
+        else if (axis === "y") { nx = Math.cos(am); nz = Math.sin(am); }
+        else { nx = Math.cos(am); ny = Math.sin(am); }
+
+        const p0n = pt(a0, r0, -1), p1n = pt(a1, r1, -1);
+        const p0p = pt(a0, r0, +1), p1p = pt(a1, r1, +1);
+        const cNeg = axis === "x" ? [cx - hl, cy, cz] : (axis === "y" ? [cx, cy - hl, cz] : [cx, cy, cz - hl]);
+        const cPos = axis === "x" ? [cx + hl, cy, cz] : (axis === "y" ? [cx, cy + hl, cz] : [cx, cy, cz + hl]);
+
+        target.pushQuad(p0n, p1n, p1p, p0p, [nx, ny, nz], col);
+        target.pushTri(cPos, p0p, p1p, nPos, col);
+        target.pushTri(cNeg, p1n, p0n, nNeg, col);
+
+        if (!opts.noEdges) {
+          batchLines.pushLine(p0p, p1p, edgeCol);
+          batchLines.pushLine(p0n, p1n, edgeCol);
+        }
+      }
+    }
+
+    function addHSSquareShaft(cx, cy, cz, lenX, rot, opts) {
+      addCylinder(cx, cy, cz, 0.125, lenX, "x", 4, [0.56, 0.60, 0.66], Object.assign({}, opts, { rot: rot + Math.PI * 0.25 }));
+    }
+
+    function addV5SmartMotor3D(cx, cy, cz, sideSign, opts) {
+      const capX = sideSign * 1.00;
+      addBox(capX, cy, cz, 0.28, 1.88, 1.88, C_GREEN, opts);
+      const inX = capX - sideSign * 0.14;
+      for (let dy of [-0.50, 0.50]) {
+        for (let dz of [-0.50, 0.50]) {
+          batchHoles.pushQuad([inX, cy+dy-0.08, cz+dz-0.08], [inX, cy+dy-0.08, cz+dz+0.08], [inX, cy+dy+0.08, cz+dz+0.08], [inX, cy+dy+0.08, cz+dz-0.08], [-sideSign, 0, 0], [0.85, 0.68, 0.22, 1.0]);
+        }
+      }
+      addBox(cx - sideSign * 0.12, cy, cz, 1.96, 1.88, 1.88, C_DARK, opts);
+      addBox(cx + sideSign * 0.98, cy, cz, 0.24, 1.66, 1.66, [0.13, 0.16, 0.20], opts);
+      addBox(cx + sideSign * 0.65, cy + 0.88, cz + 0.45, 0.45, 0.12, 0.36, C_RED, Object.assign({}, opts, { noEdges: true }));
+    }
+
+    function addV5RotationSensor3D(cx, cy, cz, rot, opts) {
+      addBox(cx, cy, cz, 0.35, 1.00, 1.48, C_DARK, opts);
+      addCylinder(cx, cy, cz, 0.36, 0.37, "x", 12, C_RED, Object.assign({}, opts, { rot }));
+      addCylinder(cx, cy, cz, 0.18, 0.38, "x", 4, [0.22, 0.25, 0.30], Object.assign({}, opts, { rot: rot + Math.PI * 0.25 }));
+      for (let dz of [-0.50, 0.50]) {
+        batchHoles.pushQuad([cx-0.18, cy-0.09, cz+dz-0.09], [cx-0.18, cy+0.09, cz+dz-0.09], [cx-0.18, cy+0.09, cz+dz+0.09], [cx-0.18, cy-0.09, cz+dz+0.09], [-1, 0, 0], HOLE_COL);
+      }
+    }
+
+    function addHSBearingFlat3D(cx, cy, cz, spanAxis, holes, thicknessX, widthOther, opts) {
+      const spanLen = holes * 0.50;
+      if (spanAxis === "z") {
+        addBox(cx, cy, cz, thicknessX, widthOther, spanLen, C_DARK, opts);
+        if (holes === 5) {
+          addCylinder(cx, cy, -4.75, 0.22, thicknessX + 0.015, "x", 12, [0.24, 0.28, 0.34], opts);
+          addCylinder(cx, cy, -3.25, 0.22, thicknessX + 0.015, "x", 12, [0.24, 0.28, 0.34], opts);
+        } else {
+          addCylinder(cx, cy, cz, 0.22, thicknessX + 0.015, "x", 12, [0.24, 0.28, 0.34], opts);
+        }
+      } else {
+        addBox(cx, cy, cz, thicknessX, spanLen, widthOther, C_DARK, opts);
+        addCylinder(cx, cy, cz, 0.22, thicknessX + 0.015, "x", 12, [0.24, 0.28, 0.34], opts);
+      }
+    }
+
+    function addHSGear3D(cx, cy, cz, radius, width, teeth, is60T, rot, opts) {
+      if (!is60T) {
+        addCylinder(cx, cy, cz, radius, width, "x", teeth * 2, C_DARK, Object.assign({}, opts, { teeth, toothDepth: 0.055, rot }));
+        addCylinder(cx, cy, cz, 0.22, width + 0.01, "x", 8, INSERT_STL, Object.assign({}, opts, { rot }));
+        return;
+      }
+      addCylinder(cx, cy, cz, radius, width, "x", 60, C_GREEN, Object.assign({}, opts, { teeth: 30, toothDepth: 0.065, rot }));
+      addCylinder(cx, cy, cz, radius - 0.16, width * 0.58, "x", 18, [0.13, 0.52, 0.30], Object.assign({}, opts, { rot }));
+      addCylinder(cx, cy, cz, 0.36, width * 0.90, "x", 10, INSERT_STL, Object.assign({}, opts, { rot }));
+      const cA = Math.cos(rot), sA = Math.sin(rot);
+      const hl = 0.74, hw = 0.22, hx = width * 0.44;
+      const pts = [
+        [cx - hx, cy + (-hl)*cA - (-hw)*sA, cz + (-hl)*sA + (-hw)*cA],
+        [cx - hx, cy + ( hl)*cA - (-hw)*sA, cz + ( hl)*sA + (-hw)*cA],
+        [cx - hx, cy + ( hl)*cA - ( hw)*sA, cz + ( hl)*sA + ( hw)*cA],
+        [cx - hx, cy + (-hl)*cA - ( hw)*sA, cz + (-hl)*sA + ( hw)*cA],
+        [cx + hx, cy + (-hl)*cA - (-hw)*sA, cz + (-hl)*sA + (-hw)*cA],
+        [cx + hx, cy + ( hl)*cA - (-hw)*sA, cz + ( hl)*sA + (-hw)*cA],
+        [cx + hx, cy + ( hl)*cA - ( hw)*sA, cz + ( hl)*sA + ( hw)*cA],
+        [cx + hx, cy + (-hl)*cA - ( hw)*sA, cz + (-hl)*sA + ( hw)*cA]
+      ];
+      batchOpaque.pushQuad(pts[0], pts[1], pts[2], pts[3], [-1, 0, 0], shadeCol(INSERT_STL, 1.0, opts));
+      batchOpaque.pushQuad(pts[5], pts[4], pts[7], pts[6], [ 1, 0, 0], shadeCol(INSERT_STL, 1.0, opts));
+    }
+
+    function addHSSprocket9P3D(cx, cy, cz, rot, isDriven, colRGB, opts) {
+      addCylinder(cx, cy, cz, 0.69, 0.30, "x", 24, colRGB, Object.assign({}, opts, { teeth: 12, toothDepth: 0.065, rot }));
+      addCylinder(cx, cy, cz, 0.44, 0.18, "x", 12, [colRGB[0]*0.78, colRGB[1]*0.78, colRGB[2]*0.78], Object.assign({}, opts, { rot }));
+      addCylinder(cx, cy, cz, 0.29, 0.28, "x", 10, isDriven ? INSERT_STL : INSERT_BRZ, Object.assign({}, opts, { rot }));
+    }
+
+    function addRollerAssembly3D(cx, cy, cz, totalLen, opts) {
+      const half = totalLen * 0.5;
+      addCylinder(cx, cy, cz - (half - 0.02), 0.185, 0.032, "z", 12, TEFLON_WHT, opts);
+      addCylinder(cx, cy, cz + (half - 0.02), 0.185, 0.032, "z", 12, TEFLON_WHT, opts);
+      const spLen = Math.max(0.25, (totalLen - 0.12) * 0.5);
+      const spOff = (half - 0.04) - spLen * 0.5;
+      addCylinder(cx, cy, cz - spOff, 0.1875, spLen, "z", 14, C_DELRIN, opts);
+      addCylinder(cx, cy, cz + spOff, 0.1875, spLen, "z", 14, C_DELRIN, opts);
+    }
+
+    function addChainLoop3D(x, yBot, yTop, zCtr, widthX, pitchR, travelOffset, opts) {
+      const hi = opts && (opts.hi || opts.spot);
+      const chainBodyCol = hi ? [0.95, 0.58, 0.12] : [0.20, 0.24, 0.30];
+      const chainPinCol  = hi ? [1.00, 0.85, 0.35] : [0.58, 0.63, 0.72];
+      const thicknessZ = 0.16, pitch = 0.50;
+      const yLo = yBot + pitchR + 0.06, yHi = yTop - pitchR - 0.06;
+      const runLen = Math.max(0.5, yHi - yLo), yMid = 0.5 * (yLo + yHi);
+      addBox(x, yMid, zCtr + pitchR, widthX, runLen, thicknessZ, chainBodyCol, opts);
+      addBox(x, yMid, zCtr - pitchR, widthX, runLen, thicknessZ, chainBodyCol, opts);
+
+      const phase = ((travelOffset % pitch) + pitch) % pitch;
+      for (let y = yLo + phase; y < yHi - 0.05; y += pitch) {
+        addBox(x, y, zCtr + pitchR, widthX, 0.22, thicknessZ + 0.02, chainPinCol, Object.assign({}, opts, { noEdges: true }));
+      }
+      const backPhase = ((-travelOffset % pitch) + pitch) % pitch;
+      for (let y = yLo + backPhase; y < yHi - 0.05; y += pitch) {
+        addBox(x, y, zCtr - pitchR, widthX, 0.22, thicknessZ + 0.02, chainPinCol, Object.assign({}, opts, { noEdges: true }));
+      }
+      const rWrap = pitchR + 0.05;
+      for (let k = 0; k <= 5; k++) {
+        const angTop = (k / 5) * Math.PI;
+        addBox(x, yTop + Math.sin(angTop) * rWrap, zCtr + Math.cos(angTop) * rWrap, widthX + 0.02, 0.16, 0.16, chainBodyCol, Object.assign({}, opts, { noEdges: true }));
+        const angBot = Math.PI + (k / 5) * Math.PI;
+        addBox(x, yBot + Math.sin(angBot) * rWrap, zCtr + Math.cos(angBot) * rWrap, widthX + 0.02, 0.16, 0.16, chainBodyCol, Object.assign({}, opts, { noEdges: true }));
+      }
+    }
+
+    function addScrewAndNut3D(x, y, z, axisSignDir, opts, nutCfg) {
+      const col = (opts && opts.spot) ? [0.12, 0.92, 0.98] : ((opts && opts.hi) ? [0.98, 0.72, 0.12] : [0.30, 0.34, 0.40]);
+      const axis = axisSignDir[1];
+      const s = axisSignDir[0] === "+" ? 1 : -1;
+      const off = 0.032;
+      const sx = axis === "x" ? x + s * off : x;
+      const sy = axis === "y" ? y + s * off : y;
+      const sz = axis === "z" ? z + s * off : z;
+      addCylinder(sx, sy, sz, 0.145, 0.064, axis, 8, col, opts);
+      const cap = axis === "x" ? sx + s * 0.033 : (axis === "y" ? sy + s * 0.033 : sz + s * 0.033);
+      const r = 0.045;
+      if (axis === "z") batchHoles.pushQuad([sx-r, sy-r, cap], [sx+r, sy-r, cap], [sx+r, sy+r, cap], [sx-r, sy+r, cap], [0,0,s], HOLE_COL);
+      else if (axis === "x") batchHoles.pushQuad([cap, sy-r, sz-r], [cap, sy-r, sz+r], [cap, sy+r, sz+r], [cap, sy+r, sz-r], [s,0,0], HOLE_COL);
+      else batchHoles.pushQuad([sx-r, cap, sz-r], [sx+r, cap, sz-r], [sx+r, cap, sz+r], [sx-r, cap, sz+r], [0,s,0], HOLE_COL);
+
+      if (nutCfg) {
+        const nx = axis === "x" ? nutCfg.pos : x;
+        const ny = axis === "y" ? nutCfg.pos : y;
+        const nz = axis === "z" ? nutCfg.pos : z;
+        addCylinder(nx, ny, nz, 0.165, 0.12, axis, 6, [0.58, 0.62, 0.68], opts);
+        if (nutCfg.type === "nylock") {
+          const ns = -s;
+          const bx = axis === "x" ? nx + ns * 0.07 : nx;
+          const by = axis === "y" ? ny + ns * 0.07 : ny;
+          const bz = axis === "z" ? nz + ns * 0.07 : nz;
+          addCylinder(bx, by, bz, 0.12, 0.04, axis, 8, NYLOCK_BLU, Object.assign({}, opts, { noEdges: true }));
+        }
+      }
+    }
+
+    function addPlacementMarker3D(x, y, z, dirStr, badgeText, groupIdx, markerCollector, showBadgeOnThisPin) {
+      if (!state.showLabels) return;
+      const activeId = state.hoverKind === "screw" ? state.hoverGroup : (state.selectedKind === "screw" ? state.selectedGroup : null);
+      const isSpotlight = activeId === groupIdx;
+      const isDimmed = activeId !== null && !isSpotlight;
+
+      const pulse = 1.0 + (isSpotlight ? 0.18 * Math.sin(performance.now() * 0.009) : 0.0);
+      const col = isSpotlight
+        ? [0.12, 0.94, 1.00, 1.00]
+        : (isDimmed ? [0.75, 0.55, 0.15, 0.35] : [0.98, 0.68, 0.10, 0.98]);
+
+      const axis = dirStr[1];
+      const s = dirStr[0] === "+" ? 1 : -1;
+      const ringOff = 0.075;
+      const rx = axis === "x" ? x + s * ringOff : x;
+      const ry = axis === "y" ? y + s * ringOff : y;
+      const rz = axis === "z" ? z + s * ringOff : z;
+
+      const rRing = 0.25 * pulse;
+      for (let k = 0; k < 8; k++) {
+        const a0 = (k / 8) * Math.PI * 2;
+        const a1 = ((k + 1) / 8) * Math.PI * 2;
+        let p0, p1;
+        if (axis === "z") {
+          p0 = [rx + Math.cos(a0)*rRing, ry + Math.sin(a0)*rRing, rz];
+          p1 = [rx + Math.cos(a1)*rRing, ry + Math.sin(a1)*rRing, rz];
+        } else if (axis === "x") {
+          p0 = [rx, ry + Math.cos(a0)*rRing, rz + Math.sin(a0)*rRing];
+          p1 = [rx, ry + Math.cos(a1)*rRing, rz + Math.sin(a1)*rRing];
+        } else {
+          p0 = [rx + Math.cos(a0)*rRing, ry, rz + Math.sin(a0)*rRing];
+          p1 = [rx + Math.cos(a1)*rRing, ry, rz + Math.sin(a1)*rRing];
+        }
+        batchLines.pushLine(p0, p1, col);
+      }
+
+      const tipDist = 0.18, tailDist = isSpotlight ? 1.85 : 1.45;
+      const dx = axis === "x" ? s : 0, dy = axis === "y" ? s : 0, dz = axis === "z" ? s : 0;
+      const tip  = [x + dx * tipDist,  y + dy * tipDist,  z + dz * tipDist];
+      const tail = [x + dx * tailDist, y + dy * tailDist, z + dz * tailDist];
+      batchLines.pushLine(tail, tip, col);
+
+      const headLen = 0.30, headRad = 0.14;
+      const basis1 = axis === "x" ? [0, 1, 0] : [1, 0, 0];
+      const basis2 = axis === "x" ? [0, 0, 1] : (axis === "y" ? [0, 0, 1] : [0, 1, 0]);
+      const basePt = [tip[0] + dx * headLen, tip[1] + dy * headLen, tip[2] + dz * headLen];
+      for (const sign of [-1, 1]) {
+        batchLines.pushLine(tip, [basePt[0] + basis1[0]*sign*headRad, basePt[1] + basis1[1]*sign*headRad, basePt[2] + basis1[2]*sign*headRad], col);
+        batchLines.pushLine(tip, [basePt[0] + basis2[0]*sign*headRad, basePt[1] + basis2[1]*sign*headRad, basePt[2] + basis2[2]*sign*headRad], col);
+      }
+
+      if (showBadgeOnThisPin && badgeText) {
+        markerCollector.push({ x: tail[0], y: tail[1], z: tail[2], text: badgeText, groupIdx, isSpotlight, isDimmed });
+      }
+    }
+
+    function addBaseFloorGrid() {
+      const colMain = state.isDark ? [0.22, 0.28, 0.38, 0.65] : [0.76, 0.80, 0.86, 0.75];
+      const colAxisX = [0.85, 0.30, 0.30, 0.75];
+      const colAxisZ = [0.25, 0.50, 0.90, 0.75];
+      const y = -1.01; // Flush right underneath BaseSkid_F/B (-1.002")
+      for (let g = -12; g <= 12; g += 2) {
+        batchLines.pushLine([g, y, -12], [g, y, 10], g === 0 ? colAxisZ : colMain, true);
+        batchLines.pushLine([-12, y, g], [12, y, g], g === 0 ? colAxisX : colMain, true);
+      }
+    }
+
+    // =========================================================================
+    // 5. 100% C-CHANNEL 3D CASCADE ASSEMBLY BUILDER
+    // =========================================================================
+    const C_ALUM   = [0.76, 0.79, 0.83];
+    const C_STEEL  = [0.46, 0.50, 0.56];
+    const C_DARK   = [0.18, 0.21, 0.26];
+    const C_GREEN  = [0.16, 0.62, 0.36];
+    const C_RED    = [0.82, 0.22, 0.20];
+    const C_DELRIN = [0.90, 0.91, 0.93];
+    const C_BRASS  = [0.80, 0.65, 0.22];
+    const C_BLUE   = [0.22, 0.48, 0.86];
+    const C_RUBBER = [0.88, 0.72, 0.34];
+    const C_SILVER = [0.84, 0.87, 0.91];
+
+    function buildScene(markerCollector) {
+      batchOpaque.reset();
+      batchHoles.reset();
+      batchLines.reset();
+      batchTrans.reset();
+
+      const maxBuiltStep = state.fullTest ? 10 : state.step;
+      const eMag = state.explode * 2.2;
+      const stepSlide = (s) => (!state.fullTest && state.step === s && state.stepAnim < 1.0) ? (1.0 - state.stepAnim) * 2.5 : 0.0;
+
+      function partOpts(s, bomGrp, extra) {
+        const isCur = !state.fullTest && state.step === s;
+        const activeBom = state.hoverKind === "bom" ? state.hoverGroup : (state.selectedKind === "bom" ? state.selectedGroup : null);
+        const spot = isCur && activeBom === bomGrp;
+        const ghost = !state.fullTest && state.ghostPrev && s < state.step;
+        return Object.assign({ hi: isCur, ghost, spot }, extra || {});
+      }
+      function screwOpts(s, scrGrp) {
+        const isCur = !state.fullTest && state.step === s;
+        const activeScr = state.hoverKind === "screw" ? state.hoverGroup : (state.selectedKind === "screw" ? state.selectedGroup : null);
+        const spot = isCur && activeScr === scrGrp;
+        const ghost = !state.fullTest && state.ghostPrev && s < state.step;
+        return { hi: isCur, ghost, spot };
+      }
+      const isCurStep = (s) => !state.fullTest && state.step === s;
+
+      const s1 = maxBuiltStep >= 6 ? state.ext * 9.0 : 0.0;
+      const s2 = maxBuiltStep >= 8 ? state.ext * 18.0 : 0.0;
+      const rot60T = -state.ext * 9.0 / 0.69;
+      const rot12TPinion = -rot60T * 5.0;
+      const rotS1Spr = -rot60T;
+
+      const s0Trans = state.xrayOuter;
+      const s0Opts = (s, bomGrp) => partOpts(s, bomGrp, { alpha: s0Trans ? 0.24 : 1.0, transparent: s0Trans });
+
+      addBaseFloorGrid();
+
+      // -----------------------------------------------------------------------
+      // STEP 1: 1x5x1x25 Base C-Channel + 1x2x1x25 Lower Skids + S0 Towers + Gussets
+      // -----------------------------------------------------------------------
+      if (maxBuiltStep >= 1) {
+        const sOff = stepSlide(1);
+        addCChannelXHoriz(0, -0.25, 0, 25, 5, -1, C_ALUM, partOpts(1, 10));
+        addCChannelXHoriz(0, -0.752 - eMag * 0.25,  0.75, 25, 2, -1, C_ALUM, partOpts(1, 11));
+        addCChannelXHoriz(0, -0.752 - eMag * 0.25, -0.75, 25, 2, -1, C_ALUM, partOpts(1, 11));
+
+        for (let px of [-4.00, -2.00, 0.00, 2.00, 4.00]) {
+          addScrewAndNut3D(px, 0.0,  1.00, "+y", screwOpts(1, 2), { pos: -0.14, type: "keps" });
+          addScrewAndNut3D(px, 0.0, -1.00, "+y", screwOpts(1, 2), { pos: -0.14, type: "keps" });
+          if (isCurStep(1) && (px === 0.00 || px === -4.00 || px === 4.00)) {
+            addPlacementMarker3D(px, 0.0, 1.00, "+y", px === 0 ? "5x25 H13 \u2022 #8-32\u00d70.500\"" : "", 2, markerCollector, px === 0.00);
+          }
+        }
+
+        for (let sx of [-1, 1]) {
+          addCChannelY(sx * 5.50, 8.752 + sOff, 0, 35, -sx, C_ALUM, s0Opts(1, 12));
+          const gx = sx * 5.50, go = (eMag + sOff) * 0.6;
+          addBox(gx, 0.292,  0.53 + go, 0.48, 0.58, 0.05, C_STEEL, partOpts(1, 13));
+          addBox(gx, 0.027,  0.80 + go, 0.48, 0.05, 0.45, C_STEEL, partOpts(1, 13));
+          addBox(gx, 0.292, -0.53 - go, 0.48, 0.58, 0.05, C_STEEL, partOpts(1, 13));
+          addBox(gx, 0.027, -0.80 - go, 0.48, 0.05, 0.45, C_STEEL, partOpts(1, 13));
+
+          addScrewAndNut3D(gx, 0.25,  0.555 + go, "+z", screwOpts(1, 0), { pos:  0.38, type: "keps" });
+          addScrewAndNut3D(gx, 0.25, -0.555 - go, "-z", screwOpts(1, 0), { pos: -0.38, type: "keps" });
+          addScrewAndNut3D(gx, 0.052,  0.75 + go, "+y", screwOpts(1, 1), { pos: -0.14, type: "keps" });
+          addScrewAndNut3D(gx, 0.052, -0.75 - go, "+y", screwOpts(1, 1), { pos: -0.14, type: "keps" });
+
+          if (isCurStep(1)) {
+            addPlacementMarker3D(gx, 0.25,  0.56 + go, "+z", sx > 0 ? "S0 H1 \u2022 #8-32\u00d70.500\" Tower" : "", 0, markerCollector, sx > 0);
+            addPlacementMarker3D(gx, 0.25, -0.56 - go, "-z", "", 0, markerCollector, false);
+            addPlacementMarker3D(gx, 0.052,  0.75 + go, "+y", sx < 0 ? "5x25 Row 4 \u2022 0.375\" Foot" : "", 1, markerCollector, sx < 0);
+            addPlacementMarker3D(gx, 0.052, -0.75 - go, "+y", "", 1, markerCollector, false);
+          }
+        }
+      }
+
+      // -----------------------------------------------------------------------
+      // STEP 2: 6.000" Hex Standoff Box & Stage 0 24-Hole 1x2x1 C-Braces
+      // -----------------------------------------------------------------------
+      if (maxBuiltStep >= 2) {
+        const zOff = -(eMag * 0.7 + stepSlide(2));
+        for (let sx of [-1, 1]) {
+          addCylinder(sx * 5.50,  0.75, -3.502 + zOff * 0.4, 0.144, 6.00, "z", 6, C_ALUM, partOpts(2, 10));
+          addCylinder(sx * 5.50, 15.75, -3.502 + zOff * 0.4, 0.144, 6.00, "z", 6, C_ALUM, partOpts(2, 10));
+          addScrewAndNut3D(sx * 5.50,  0.75, -0.445, "+z", screwOpts(2, 0));
+          addScrewAndNut3D(sx * 5.50, 15.75, -0.445, "+z", screwOpts(2, 0));
+          addScrewAndNut3D(sx * 5.50,  0.75, -6.559 + zOff, "-z", screwOpts(2, 1));
+          addScrewAndNut3D(sx * 5.50, 15.75, -6.559 + zOff, "-z", screwOpts(2, 1));
+          if (isCurStep(2)) {
+            addPlacementMarker3D(sx * 5.50,  0.75, -0.445, "+z", "", 0, markerCollector, false);
+            addPlacementMarker3D(sx * 5.50, 15.75, -0.445, "+z", sx < 0 ? "S0 H32 \u2022 0.375\" Front->Standoff" : "", 0, markerCollector, sx < 0);
+            addPlacementMarker3D(sx * 5.50,  0.75, -6.56 + zOff, "-z", "", 1, markerCollector, false);
+            addPlacementMarker3D(sx * 5.50, 15.75, -6.56 + zOff, "-z", sx > 0 ? "Brace H23 \u2022 0.375\" Back->Standoff" : "", 1, markerCollector, sx > 0);
+          }
+        }
+        addCChannelX(0,  0.75, -6.754 + zOff, 24, -1, C_ALUM, s0Opts(2, 11));
+        addCChannelX(0, 15.75, -6.754 + zOff, 24, -1, C_ALUM, s0Opts(2, 11));
+      }
+
+      // -----------------------------------------------------------------------
+      // STEP 3: 1x5x1x8 Gearbox C-Channels, 1x2x1x8 Bearing Arm C-Channels & 1:5
+      // -----------------------------------------------------------------------
+      if (maxBuiltStep >= 3) {
+        const sOff = stepSlide(3);
+        for (let sx of [-1, 1]) {
+          const mxOut = sx * eMag * 0.6;
+          // 8-hole 1x5x1 Gearbox C-Channels (8 - 5x C-Chan.f3d) at X = ±0.55
+          addCChannelZ(sx * 0.55, 2.25, -4.50, 8, 5, -sx, C_ALUM, partOpts(3, 10));
+          addHSBearingFlat3D(sx * 0.70, 2.25, -4.00, "z", 5, 0.08, 0.50, partOpts(3, 10));
+          addScrewAndNut3D(sx * 0.80, 1.25, -6.45, sx > 0 ? "+x" : "-x", screwOpts(3, 0), { pos: sx * 0.64, type: "keps" });
+
+          addHSSquareShaft(sx * 0.43, 2.25, -3.25, 0.40, rot60T, partOpts(3, 13));
+          addHSSquareShaft((!state.dualMotor && sx < 0) ? -2.82 : sx * 2.63, 2.25, -3.25, (!state.dualMotor && sx < 0) ? 3.24 : 3.58, rot60T, partOpts(3, 13));
+          addHSSquareShaft(sx * 5.26, 2.25, -3.25, 0.96, rot60T, partOpts(3, 13));
+
+          // 8-hole 1x2x1 Bearing Arm C-Channels (8 - 2x C-Chan.f3d) at X = ±6.005
+          const ax = sx * (6.005 + mxOut * 0.4 + sOff * 0.5);
+          const bx = sx * (5.92  + mxOut * 0.5 + sOff * 0.7);
+          addCChannelZ(ax,  2.25, -1.75, 8, 2, sx, C_ALUM, partOpts(3, 12));
+          addCChannelZ(ax, 16.75, -1.75, 8, 2, sx, C_ALUM, partOpts(3, 12));
+          addHSBearingFlat3D(bx,  2.25, -3.25, "z", 3, 0.16, 0.50, partOpts(3, 12));
+          addHSBearingFlat3D(bx, 16.75, -3.25, "z", 3, 0.16, 0.50, partOpts(3, 12));
+
+          addScrewAndNut3D(bx + sx * 0.08, 2.25, -3.75, sx > 0 ? "+x" : "-x", screwOpts(3, 2), { pos: sx * 5.66, type: "nylock" });
+          addScrewAndNut3D(bx + sx * 0.08, 2.25, -2.75, sx > 0 ? "+x" : "-x", screwOpts(3, 2), { pos: sx * 5.66, type: "nylock" });
+          addScrewAndNut3D(sx * 5.81, 2.25, 0.00, sx > 0 ? "+x" : "-x", screwOpts(3, 2), { pos: sx * 5.62, type: "nylock" });
+
+          if (isCurStep(3)) {
+            addPlacementMarker3D(sx * 0.80, 1.25, -6.45, sx > 0 ? "+x" : "-x", sx > 0 ? "Brace H14 \u2022 0.375\" 5x8 C-Chan" : "", 0, markerCollector, sx > 0);
+            addPlacementMarker3D(bx + sx * 0.08, 2.25, -3.75, sx > 0 ? "+x" : "-x", sx > 0 ? "S0 H5 \u2022 0.500\" 2x8 Arm C-Chan" : "", 2, markerCollector, sx > 0);
+            addPlacementMarker3D(sx * 5.81, 2.25, 0.00, sx > 0 ? "+x" : "-x", "", 2, markerCollector, false);
+          }
+        }
+
+        const motorSides = state.dualMotor ? [-1, 1] : [1];
+        for (let sx of motorSides) {
+          const mxOff = sx * (eMag * 0.9 + sOff);
+          addV5SmartMotor3D(sx * 2.26 + mxOff, 2.25, -4.75, sx, partOpts(3, 11));
+          addHSSquareShaft(sx * 0.43, 2.25, -4.75, 0.40, rot12TPinion, partOpts(3, 11));
+          addScrewAndNut3D(sx * 0.745, 2.75, -5.25, sx < 0 ? "+x" : "-x", screwOpts(3, 1));
+          if (isCurStep(3)) {
+            addPlacementMarker3D(sx * 0.745, 2.75, -5.25, sx < 0 ? "+x" : "-x", sx > 0 ? "5x8 Row 3 \u2022 0.375\" Motor" : "", 1, markerCollector, sx > 0);
+          }
+        }
+        const rx = state.dualMotor ? -6.45 : -1.00;
+        addV5RotationSensor3D(rx - eMag * 0.65, 2.25, -3.25, rot60T, partOpts(3, 13));
+        if (isCurStep(3)) {
+          addPlacementMarker3D(rx - 0.18 - eMag * 0.65, 2.25, -3.75, "-x", "Rot Sensor \u2022 #8-32\u00d70.750\"", 3, markerCollector, true);
+        }
+
+        addHSGear3D(0, 2.25, -4.75, 0.38, 0.42, 12, false, rot12TPinion, partOpts(3, 11));
+        addHSGear3D(0, 2.25, -3.25, 1.11, 0.42, 60, true,  rot60T, partOpts(3, 11));
+      }
+
+      // -----------------------------------------------------------------------
+      // STEP 4: Stage 0 12T - 9P Sprockets & 9P Closed Chain
+      // -----------------------------------------------------------------------
+      if (maxBuiltStep >= 4) {
+        for (let sx of [-1, 1]) {
+          addHSSquareShaft(sx * 5.26, 16.75, -3.25, 0.96, rot60T, partOpts(4, 11));
+          addHSSprocket9P3D(sx * 4.60,  2.25, -3.25, rot60T, true, C_GREEN, partOpts(4, 10));
+          addHSSprocket9P3D(sx * 4.60, 16.75, -3.25, rot60T, true, C_GREEN, partOpts(4, 10));
+          addCylinder(sx * 4.92,  2.25, -3.25, 0.24, 0.24, "x", 10, C_DARK, partOpts(4, 11));
+          addCylinder(sx * 4.92, 16.75, -3.25, 0.24, 0.24, "x", 10, C_DARK, partOpts(4, 11));
+          addChainLoop3D(sx * 4.60, 2.25, 16.75, -3.25, 0.26, 0.72, s1, partOpts(4, 12));
+          addScrewAndNut3D(sx * 6.00, 16.75, -3.75, sx > 0 ? "+x" : "-x", screwOpts(4, 1), { pos: sx * 5.66, type: "nylock" });
+          addScrewAndNut3D(sx * 6.00, 16.75, -2.75, sx > 0 ? "+x" : "-x", screwOpts(4, 1), { pos: sx * 5.66, type: "nylock" });
+
+          if (isCurStep(4)) {
+            addPlacementMarker3D(sx * 4.92, 16.75, -3.25, sx > 0 ? "+x" : "-x", sx > 0 ? "X=\u00b14.92\" Clamping Collars" : "", 0, markerCollector, sx > 0);
+            addPlacementMarker3D(sx * 4.92,  2.25, -3.25, sx > 0 ? "+x" : "-x", "", 0, markerCollector, false);
+            addPlacementMarker3D(sx * 6.00, 16.75, -3.75, sx > 0 ? "+x" : "-x", sx < 0 ? "H34 \u2022 0.500\" Top Pillow" : "", 1, markerCollector, sx < 0);
+          }
+        }
+      }
+
+      // -----------------------------------------------------------------------
+      // STEP 5: Stage 0 3-Hole 1x2x1 C-Channel Guide Brackets & Rollers
+      // -----------------------------------------------------------------------
+      if (maxBuiltStep >= 5) {
+        const sOff = stepSlide(5);
+        for (let sx of [-1, 1]) {
+          for (let y of [2.25, 16.75]) {
+            const zEx = eMag * 0.5 + sOff * 0.6;
+            addCChannelX(sx * 4.91, y,  0.76 + zEx, 3,  1, C_ALUM, partOpts(5, 10));
+            addCChannelX(sx * 4.91, y, -0.76 - zEx, 3, -1, C_ALUM, partOpts(5, 10));
+            addRollerAssembly3D(sx * 4.32, y, 0.00, 0.98, partOpts(5, 11));
+            addScrewAndNut3D(sx * 4.32, y,  0.565 + zEx, "+z", screwOpts(5, 1), { pos: -0.625 - zEx, type: "nylock" });
+            addScrewAndNut3D(sx * 5.41, y,  0.565 + zEx, "+z", screwOpts(5, 0), { pos:  0.38, type: "keps" });
+            addScrewAndNut3D(sx * 5.41, y, -0.565 - zEx, "-z", screwOpts(5, 0), { pos: -0.38, type: "keps" });
+
+            if (isCurStep(5)) {
+              addPlacementMarker3D(sx * 5.41, y, 0.565 + zEx, "+z", (sx < 0 && y > 10) ? "S0 H34 \u2022 0.375\" 3x C-Bracket" : "", 0, markerCollector, sx < 0 && y > 10);
+              addPlacementMarker3D(sx * 4.32, y, 0.565 + zEx, "+z", (sx > 0 && y > 10) ? "Tip H1 \u2022 1.500\" Roller Axle" : "", 1, markerCollector, sx > 0 && y > 10);
+            }
+          }
+        }
+      }
+
+      // -----------------------------------------------------------------------
+      // STEP 6: Stage 1 30-Hole C-Rails, 0.750" Standoffs & 16-Hole C-Braces
+      // -----------------------------------------------------------------------
+      if (maxBuiltStep >= 6) {
+        const yOff = stepSlide(6) * 1.2;
+        for (let sx of [-1, 1]) {
+          addCChannelY(sx * 3.85, 8.25 + s1 + yOff, 0, 30, -sx, C_SILVER, partOpts(6, 10));
+          addCylinder(sx * 3.85,  1.0 + s1 + yOff, -0.877, 0.144, 0.746, "z", 6, C_ALUM, partOpts(6, 11));
+          addCylinder(sx * 3.85, 15.0 + s1 + yOff, -0.877, 0.144, 0.746, "z", 6, C_ALUM, partOpts(6, 11));
+          addScrewAndNut3D(sx * 3.85,  1.0 + s1 + yOff, -0.445, "+z", screwOpts(6, 0));
+          addScrewAndNut3D(sx * 3.85, 15.0 + s1 + yOff, -0.445, "+z", screwOpts(6, 0));
+          addScrewAndNut3D(sx * 3.85,  1.0 + s1 + yOff, -1.307, "-z", screwOpts(6, 1));
+          addScrewAndNut3D(sx * 3.85, 15.0 + s1 + yOff, -1.307, "-z", screwOpts(6, 1));
+
+          if (isCurStep(6)) {
+            addPlacementMarker3D(sx * 3.85, 15.0 + s1 + yOff, -0.445, "+z", sx < 0 ? "S1 H29 \u2022 0.375\" Front->0.75\" Post" : "", 0, markerCollector, sx < 0);
+            addPlacementMarker3D(sx * 3.85,  1.0 + s1 + yOff, -0.445, "+z", "", 0, markerCollector, false);
+            addPlacementMarker3D(sx * 3.85, 15.0 + s1 + yOff, -1.307, "-z", sx > 0 ? "Brace H16 \u2022 0.375\" Back->0.75\" Post" : "", 1, markerCollector, sx > 0);
+            addPlacementMarker3D(sx * 3.85,  1.0 + s1 + yOff, -1.307, "-z", "", 1, markerCollector, false);
+          }
+        }
+        addCChannelX(0,  1.0 + s1 + yOff, -1.502, 16, -1, C_SILVER, partOpts(6, 12));
+        addCChannelX(0, 15.0 + s1 + yOff, -1.502, 16, -1, C_SILVER, partOpts(6, 12));
+      }
+
+      // -----------------------------------------------------------------------
+      // STEP 7: Stage 1 Bronze Sprockets, Chain & Spaced 3-Hole C-Channel Rollers
+      // -----------------------------------------------------------------------
+      if (maxBuiltStep >= 7) {
+        for (let sx of [-1, 1]) {
+          for (let y of [1.5, 14.5]) {
+            addHSBearingFlat3D(sx * 3.99, y + s1, 0, "y", 3, 0.10, 0.50, partOpts(7, 10));
+            addHSSquareShaft(sx * 3.65, y + s1, 0, 0.56, 0, partOpts(7, 10));
+            addHSSprocket9P3D(sx * 3.20, y + s1, 0, rotS1Spr, false, C_BLUE, partOpts(7, 11));
+            addScrewAndNut3D(sx * 4.10, y + s1 + 0.50, 0, sx > 0 ? "+x" : "-x", screwOpts(7, 0), { pos: sx * 3.88, type: "nylock" });
+            addScrewAndNut3D(sx * 4.10, y + s1 - 0.50, 0, sx > 0 ? "+x" : "-x", screwOpts(7, 0), { pos: sx * 3.88, type: "nylock" });
+            if (isCurStep(7) && y > 10) {
+              addPlacementMarker3D(sx * 4.10, y + s1 + 0.50, 0, sx > 0 ? "+x" : "-x", sx < 0 ? "S1 H29 \u2022 0.500\" Bearing Flat" : "", 0, markerCollector, sx < 0);
+            }
+          }
+          addChainLoop3D(sx * 3.20, 1.5 + s1, 14.5 + s1, 0.00, 0.26, 0.72, state.ext * 9.0, partOpts(7, 12));
+
+          for (let y of [2.35, 13.95]) {
+            const zEx = eMag * 0.4;
+            addCylinder(sx * 3.85, y + s1,  0.665 + zEx * 0.5, 0.156, 0.32, "z", 12, C_DELRIN, partOpts(7, 12));
+            addCylinder(sx * 3.85, y + s1, -0.665 - zEx * 0.5, 0.156, 0.32, "z", 12, C_DELRIN, partOpts(7, 12));
+            addCChannelX(sx * 3.35, y + s1,  1.08 + zEx, 3,  1, C_ALUM, partOpts(7, 12));
+            addCChannelX(sx * 3.35, y + s1, -1.08 - zEx, 3, -1, C_ALUM, partOpts(7, 12));
+            addRollerAssembly3D(sx * 2.84, y + s1, 0.00, 1.64, partOpts(7, 12));
+            addScrewAndNut3D(sx * 2.84, y + s1, 0.885 + zEx, "+z", screwOpts(7, 2), { pos: -0.945 - zEx, type: "nylock" });
+            addScrewAndNut3D(sx * 3.85, y + s1, 0.885 + zEx, "+z", screwOpts(7, 1), { pos:  0.38, type: "nylock" });
+            addScrewAndNut3D(sx * 3.85, y + s1,-0.885 - zEx, "-z", screwOpts(7, 1), { pos: -0.38, type: "nylock" });
+
+            if (isCurStep(7) && y > 10) {
+              addPlacementMarker3D(sx * 3.85, y + s1, 0.885 + zEx, "+z", "", 1, markerCollector, false);
+              addPlacementMarker3D(sx * 2.84, y + s1, 0.885 + zEx, "+z", sx > 0 ? "Y=13.95 \u2022 2.000\" Roller Axle" : "", 2, markerCollector, sx > 0);
+            }
+          }
+        }
+      }
+
+      // -----------------------------------------------------------------------
+      // STEP 8: Stage 2 24-Hole C-Carriage + 8-Hole C-Braces & 90° Flat Gussets
+      // -----------------------------------------------------------------------
+      if (maxBuiltStep >= 8) {
+        const yOff = stepSlide(8) * 1.4;
+        for (let sx of [-1, 1]) {
+          addCChannelY(sx * 2.40, 7.0 + s2 + yOff, 0, 24, -sx, C_ALUM, partOpts(8, 10));
+          addBox(sx * 2.07,  1.75 + s2 + yOff, 0.28, 0.12, 0.80, 0.35, C_STEEL, partOpts(8, 12));
+          addBox(sx * 2.07, 12.25 + s2 + yOff, 0.28, 0.12, 0.80, 0.35, C_STEEL, partOpts(8, 12));
+          addScrewAndNut3D(sx * 2.07, 12.25 + s2 + yOff, 0.455, "+z", screwOpts(8, 1), { pos: 0.04, type: "nylock" });
+          addScrewAndNut3D(sx * 2.07,  1.75 + s2 + yOff, 0.455, "+z", screwOpts(8, 1), { pos: 0.04, type: "nylock" });
+          addScrewAndNut3D(sx * 1.85, 12.25 + s2 + yOff, 0.0, sx < 0 ? "+x" : "-x", screwOpts(8, 0), { pos: sx * 2.45, type: "nylock" });
+
+          if (isCurStep(8)) {
+            addPlacementMarker3D(sx * 1.85, 12.25 + s2 + yOff, 0.0, sx < 0 ? "+x" : "-x", sx < 0 ? "S2 H23 \u2022 0.375\" Brace->Web" : "", 0, markerCollector, sx < 0);
+            addPlacementMarker3D(sx * 2.07, 12.25 + s2 + yOff, 0.455, "+z", sx > 0 ? "S2 H23 \u2022 0.375\" 90\u00b0 Gusset" : "", 1, markerCollector, sx > 0);
+            addPlacementMarker3D(sx * 2.07,  1.75 + s2 + yOff, 0.455, "+z", "", 1, markerCollector, false);
+          }
+        }
+        addCChannelX(0,  1.75 + s2 + yOff, 0, 8, 1, C_ALUM, partOpts(8, 11));
+        addCChannelX(0, 12.25 + s2 + yOff, 0, 8, 1, C_ALUM, partOpts(8, 11));
+      }
+
+      // -----------------------------------------------------------------------
+      // STEP 9: All-Chain Coupling + 5-Hole 1x2x1 C-Channel Anchor Bridge
+      // -----------------------------------------------------------------------
+      if (maxBuiltStep >= 9) {
+        for (let sx of [-1, 1]) {
+          addCylinder(sx * 3.85, 3.25 + s1, -1.45, 0.144, 1.88, "z", 6, C_BRASS, partOpts(9, 11));
+          addBox(sx * 4.12, 3.25 + s1, -2.53, 0.68, 0.40, 0.26, C_BRASS, partOpts(9, 10));
+          addScrewAndNut3D(sx * 4.46, 3.25 + s1, -2.53, sx > 0 ? "+x" : "-x", screwOpts(9, 0));
+
+          addCylinder(sx * 5.50, 12.90, -0.68, 0.144, 0.35, "z", 6, C_ALUM, partOpts(9, 11));
+          addCChannelX(sx * 4.35, 12.90, -1.11, 5, -1, C_ALUM, partOpts(9, 11));
+          addBox(sx * 3.20, 12.90, -0.835, 0.40, 0.40, 0.05, C_BRASS, partOpts(9, 10));
+          addScrewAndNut3D(sx * 5.50, 12.90, -0.92, "-z", screwOpts(9, 1));
+          addScrewAndNut3D(sx * 3.20, 12.90, -0.92, "-z", screwOpts(9, 1), { pos: -0.78, type: "nylock" });
+
+          addCylinder(sx * 2.40, 3.60 + s2, 0.61, 0.156, 0.20, "z", 12, C_DELRIN, partOpts(9, 12));
+          addBox(sx * 2.86, 3.60 + s2, 0.72, 0.40, 0.40, 0.20, C_BRASS, partOpts(9, 10));
+          addScrewAndNut3D(sx * 2.86, 3.60 + s2, 0.82, "+z", screwOpts(9, 2), { pos: 0.56, type: "nylock" });
+          addScrewAndNut3D(sx * 2.40, 3.60 + s2, 0.72, "+z", screwOpts(9, 2), { pos: 0.38, type: "nylock" });
+
+          if (isCurStep(9)) {
+            addPlacementMarker3D(sx * 4.46, 3.25 + s1, -2.53, sx > 0 ? "+x" : "-x", sx > 0 ? "(A) S1 \u2022 0.500\" S0->S1 Link" : "", 0, markerCollector, sx > 0);
+            addPlacementMarker3D(sx * 3.20, 12.90, -0.92, "-z", sx < 0 ? "(B) 5x C-Chan \u2022 0.750\" Anchor" : "", 1, markerCollector, sx < 0);
+            addPlacementMarker3D(sx * 2.86, 3.60 + s2, 0.82, "+z", sx > 0 ? "(C) S2 \u2022 0.750\" S1->S2 Spacer" : "", 2, markerCollector, sx > 0);
+          }
+        }
+      }
+
+      // -----------------------------------------------------------------------
+      // STEP 10: #64 Rubber Band Counterbalance Assist
+      // -----------------------------------------------------------------------
+      if (maxBuiltStep >= 10 && state.bands) {
+        const yTop = 15.55, yBot = 1.20 + s1, yMid = 0.5 * (yTop + yBot), len = Math.abs(yTop - yBot);
+        for (let sx of [-1, 1]) {
+          addCylinder(sx * 3.40, 15.75, -4.50, 0.144, 3.98, "z", 6, C_BRASS, partOpts(10, 10));
+          addCylinder(sx * 3.40, 1.00 + s1, -2.13, 0.144, 0.74, "z", 6, C_BRASS, partOpts(10, 11));
+          addCylinder(sx * 3.365, yMid, -2.40, 0.035, len, "y", 8, C_RUBBER, Object.assign(partOpts(10, 12), { noEdges: true }));
+          addCylinder(sx * 3.435, yMid, -2.40, 0.035, len, "y", 8, C_RUBBER, Object.assign(partOpts(10, 12), { noEdges: true }));
+          addScrewAndNut3D(sx * 3.40, 15.75, -6.559, "-z", screwOpts(10, 0));
+          addScrewAndNut3D(sx * 3.40, 1.00 + s1, -1.70, "+z", screwOpts(10, 1));
+
+          if (isCurStep(10)) {
+            addPlacementMarker3D(sx * 3.40, 15.75, -6.56, "-z", sx > 0 ? "Top Brace H19 \u2022 0.500\" 4.00\" Post" : "", 0, markerCollector, sx > 0);
+            addPlacementMarker3D(sx * 3.40, 1.00 + s1, -1.70, "+z", sx < 0 ? "Bot Brace H2 \u2022 0.500\" 0.75\" Post" : "", 1, markerCollector, sx < 0);
+          }
+        }
+      }
+    }
+
+    // =========================================================================
+    // 6. UPLOAD & RENDER FRAME (STRICT WEBGL DEPTH TESTING + 2D PIN OVERLAY)
+    // =========================================================================
+    function bindAndUpload(buf, batch, drawMode) {
+      if (batch.count === 0) return;
+      gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+      gl.bufferData(gl.ARRAY_BUFFER, batch.data.subarray(0, batch.count * 10), gl.DYNAMIC_DRAW);
+      const stride = 40;
+      gl.enableVertexAttribArray(aPosLoc);
+      gl.vertexAttribPointer(aPosLoc, 3, gl.FLOAT, false, stride, 0);
+      gl.enableVertexAttribArray(aNormLoc);
+      gl.vertexAttribPointer(aNormLoc, 3, gl.FLOAT, false, stride, 12);
+      gl.enableVertexAttribArray(aColLoc);
+      gl.vertexAttribPointer(aColLoc, 4, gl.FLOAT, false, stride, 24);
+      gl.drawArrays(drawMode, 0, batch.count);
+    }
+
+    function renderFrame() {
+      const wrap = document.getElementById("viewport-wrap");
+      const cssW = wrap.clientWidth || 640;
+      const cssH = wrap.clientHeight || 480;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const pixW = Math.max(1, Math.round(cssW * dpr));
+      const pixH = Math.max(1, Math.round(cssH * dpr));
+
+      if (cadGlCanvas.width !== pixW || cadGlCanvas.height !== pixH) {
+        cadGlCanvas.width = pixW;
+        cadGlCanvas.height = pixH;
+        cadOverlay.width = pixW;
+        cadOverlay.height = pixH;
+      }
+
+      setTiltAngle(state.tilted ? (-15 * Math.PI / 180) : 0.0);
+
+      const markers = [];
+      buildScene(markers);
+
+      gl.viewport(0, 0, pixW, pixH);
+      if (state.isDark) gl.clearColor(0.059, 0.090, 0.165, 1.0);
+      else gl.clearColor(0.933, 0.949, 0.969, 1.0);
+      gl.depthMask(true);
+      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+      gl.enable(gl.DEPTH_TEST);
+      gl.depthFunc(gl.LEQUAL);
+      gl.disable(gl.CULL_FACE);
+
+      const proj = mat4Perspective(32 * Math.PI / 180, cssW / cssH, 1.0, 260.0);
+      const view = buildViewMatrix(state.cam);
+      const mvp = mat4Mul(proj, view);
+      gl.uniformMatrix4fv(uMVPLoc, false, mvp);
+
+      gl.disable(gl.BLEND);
+      gl.depthMask(true);
+      gl.enable(gl.POLYGON_OFFSET_FILL);
+      gl.polygonOffset(2.0, 3.0);
+      gl.uniform1f(uApplyNormLoc, 1.0);
+      bindAndUpload(vboOpaque, batchOpaque, gl.TRIANGLES);
+
+      gl.polygonOffset(0.8, 1.0);
+      gl.uniform1f(uApplyNormLoc, 0.0);
+      bindAndUpload(vboHoles, batchHoles, gl.TRIANGLES);
+
+      gl.disable(gl.POLYGON_OFFSET_FILL);
+      gl.uniform1f(uApplyNormLoc, 0.0);
+      bindAndUpload(vboLines, batchLines, gl.LINES);
+
+      if (state.xrayOuter && batchTrans.count > 0) {
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+        gl.depthMask(false);
+        gl.enable(gl.POLYGON_OFFSET_FILL);
+        gl.polygonOffset(2.0, 3.0);
+        gl.uniform1f(uApplyNormLoc, 1.0);
+        bindAndUpload(vboTrans, batchTrans, gl.TRIANGLES);
+        gl.depthMask(true);
+        gl.disable(gl.BLEND);
+        gl.disable(gl.POLYGON_OFFSET_FILL);
+      }
+
+      ctx2d.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx2d.clearRect(0, 0, cssW, cssH);
+
+      if (state.showLabels && markers.length > 0) {
+        ctx2d.font = "600 11px ui-sans-serif, system-ui, sans-serif";
+        const placedBoxes = [];
+        for (const m of markers) {
+          if (m.isDimmed) continue;
+          const tp = applyTilt(m.x, m.y, m.z);
+          const clip = transformPointM4(mvp, tp[0], tp[1], tp[2]);
+          if (clip[3] <= 0.1) continue;
+          let sx = (clip[0] / clip[3] * 0.5 + 0.5) * cssW;
+          let sy = (0.5 - clip[1] / clip[3] * 0.5) * cssH;
+          const tw = ctx2d.measureText(m.text).width + 16;
+          const th = 21;
+          sx = Math.max(tw * 0.5 + 8, Math.min(cssW - tw * 0.5 - 8, sx));
+          sy = Math.max(46, Math.min(cssH - 18, sy));
+
+          for (const b of placedBoxes) {
+            if (Math.abs(sx - b.x) < (tw + b.w) * 0.5 + 6 && Math.abs(sy - b.y) < th + 4) {
+              sy = b.y + th + 6;
+            }
+          }
+          placedBoxes.push({ x: sx, y: sy, w: tw, h: th });
+
+          ctx2d.fillStyle = m.isSpotlight
+            ? (state.isDark ? "rgba(8, 51, 68, 0.96)" : "rgba(236, 254, 255, 0.98)")
+            : (state.isDark ? "rgba(15, 23, 42, 0.92)" : "rgba(255, 255, 255, 0.95)");
+          ctx2d.strokeStyle = m.isSpotlight ? "#06b6d4" : "#f59e0b";
+          ctx2d.lineWidth = m.isSpotlight ? 2.0 : 1.5;
+          const bx = sx - tw * 0.5, by = sy - th * 0.5;
+          ctx2d.beginPath();
+          ctx2d.roundRect(bx, by, tw, th, 5);
+          ctx2d.fill();
+          ctx2d.stroke();
+
+          ctx2d.fillStyle = m.isSpotlight
+            ? (state.isDark ? "#67e8f9" : "#0e7490")
+            : (state.isDark ? "#fde68a" : "#92400e");
+          ctx2d.textAlign = "center";
+          ctx2d.textBaseline = "middle";
+          ctx2d.fillText(m.text, sx, sy + 0.5);
+        }
+      }
+    }
+
+    // =========================================================================
+    // 7. REAL-WORLD PHYSICS LOOP + SMOOTH CAMERA INTERPOLATION
+    // =========================================================================
+    let lastTs = 0;
+    function ensurePhysicsLoop(ts) {
+      if (!lastTs) lastTs = ts;
+      const dt = Math.min(0.033, Math.max(0.001, (ts - lastTs) / 1000));
+      lastTs = ts;
+
+      if (state.stepAnim < 1.0) state.stepAnim = Math.min(1.0, state.stepAnim + dt * 2.6);
+
+      if (state.camGoal) {
+        const alpha = 1.0 - Math.exp(-7.5 * dt);
+        state.cam.yaw   += shortestAngleDiff(state.cam.yaw, state.camGoal.yaw) * alpha;
+        state.cam.pitch += (state.camGoal.pitch - state.cam.pitch) * alpha;
+        state.cam.dist  += (state.camGoal.dist - state.cam.dist) * alpha;
+        state.cam.tx    += (state.camGoal.tx - state.cam.tx) * alpha;
+        state.cam.ty    += (state.camGoal.ty - state.cam.ty) * alpha;
+        state.cam.tz    += (state.camGoal.tz - state.cam.tz) * alpha;
+        if (Math.abs(shortestAngleDiff(state.cam.yaw, state.camGoal.yaw)) < 0.005 &&
+            Math.abs(state.cam.pitch - state.camGoal.pitch) < 0.005 &&
+            Math.abs(state.cam.dist - state.camGoal.dist) < 0.05 &&
+            Math.abs(state.cam.ty - state.camGoal.ty) < 0.03) {
+          state.camGoal = null;
+        }
+      }
+
+      if (state.autoAnimate) {
+        state.targetExt += state.animDir * dt * 0.42;
+        if (state.targetExt >= 1.0) { state.targetExt = 1.0; state.animDir = -1; }
+        else if (state.targetExt <= 0.0) { state.targetExt = 0.0; state.animDir = 1; }
+        document.getElementById("slider-ext").value = Math.round(state.targetExt * 100);
+        document.getElementById("ext-val").textContent = (state.targetExt * 18.0).toFixed(2) + '"';
+      }
+
+      const gravityScale = state.tilted ? Math.cos(15 * Math.PI / 180) : 1.0;
+      const effGravityLbs = (2.6 + 2.0 * 1.9) * gravityScale;
+      const bandAssistLbs = state.bands ? (4.6 + (1.0 - state.ext) * 1.6) : 0.0;
+      const netGravityLbs = effGravityLbs - bandAssistLbs;
+
+      const motorStallNm = (state.dualMotor ? 4.20 : 2.10) * 0.90;
+      const errIn = (state.targetExt - state.ext) * 18.0;
+      const vCmdIn = Math.max(-28.0, Math.min(28.0, errIn * 8.0));
+
+      const accelMax = state.dualMotor ? 190.0 : 105.0;
+      const dv = Math.max(-accelMax * dt, Math.min(accelMax * dt, vCmdIn - state.vel));
+      state.vel += dv;
+      if (Math.abs(errIn) < 0.02 && Math.abs(state.vel) < 0.25) {
+        state.ext = state.targetExt;
+        state.vel = 0.0;
+      } else {
+        state.ext = Math.max(0.0, Math.min(1.0, state.ext + (state.vel * dt) / 18.0));
+      }
+
+      const s1VelInS = state.vel * 0.5;
+      const sprRpm = (s1VelInS / (2 * Math.PI * 0.69)) * 60;
+      const motorRpm = Math.max(-200, Math.min(200, sprRpm * 5.0));
+      const holdNm = (netGravityLbs * 4.44822) * (0.69 * 0.0254) / 5.0;
+      const dynNm = holdNm + (state.vel * 0.02);
+      const clampedNm = Math.max(-motorStallNm, Math.min(motorStallNm, dynNm));
+
+      document.getElementById("tel-vel").textContent = Math.abs(state.vel).toFixed(1) + ' "/s';
+      document.getElementById("tel-rpm").textContent = Math.round(motorRpm) + " RPM";
+      document.getElementById("tel-trq").textContent = clampedNm.toFixed(2) + " N\u00b7m";
+      document.getElementById("tel-band").textContent = bandAssistLbs.toFixed(1) + " lb";
+
+      renderFrame();
+      requestAnimationFrame(ensurePhysicsLoop);
+    }
+
+    // =========================================================================
+    // 8. INTERACTIVE UI BINDING (HOVER / CLICK TO SPOTLIGHT & AUTO-FOCUS)
+    // =========================================================================
+    function renderSpotlightBanner() {
+      const banner = document.getElementById("step-spotlight-banner");
+      const kind = state.hoverKind || state.selectedKind;
+      const grp = state.hoverGroup !== null ? state.hoverGroup : state.selectedGroup;
+      if (kind === null || grp === null || state.fullTest) {
+        banner.classList.add("hidden");
+        banner.innerHTML = "";
+        return;
+      }
+      const s = getSteps()[state.step - 1];
+      const item = kind === "screw" ? s.screws.find(x => x.group === grp) : s.bom.find(x => x.group === grp);
+      if (!item) { banner.classList.add("hidden"); return; }
+      banner.classList.remove("hidden");
+      if (kind === "screw") {
+        banner.innerHTML = `
+          <div class="font-semibold text-cyan-700 dark:text-cyan-300 flex items-center justify-between">
+            <span>SPOTLIGHT: ${item.size} (${item.qty})</span>
+            <span class="font-mono text-[10px]">${item.hole}</span>
+          </div>
+          <div class="text-[11px] font-mono bg-card/80 border border-cyan-500/30 rounded px-2 py-1 text-[var(--foreground)]">${item.stack}</div>
+        `;
+      } else {
+        banner.innerHTML = `
+          <div class="font-semibold text-cyan-700 dark:text-cyan-300">${item.name} (${item.qty})</div>
+          <div class="text-[11px] font-mono text-[var(--foreground)]">Mount Location: ${item.hole}</div>
+        `;
+      }
+    }
+
+    function renderStepUI() {
+      const steps = getSteps();
+      const s = steps[state.step - 1];
+
+      document.getElementById("step-badge").textContent = state.fullTest
+        ? "Full Test Mode (All 10 Steps)"
+        : `Step ${s.id} of ${steps.length}`;
+
+      const pillsEl = document.getElementById("step-pills");
+      pillsEl.innerHTML = "";
+      for (const st of steps) {
+        const b = document.createElement("button");
+        b.textContent = st.id;
+        b.className = "w-7 h-7 rounded text-xs font-semibold transition cursor-pointer " +
+          (!state.fullTest && state.step === st.id
+            ? "btn-primary shadow-sm"
+            : (st.id <= state.step ? "btn-secondary border border-theme" : "opacity-45 btn-secondary border border-theme"));
+        b.addEventListener("click", () => selectStep(st.id));
+        pillsEl.appendChild(b);
+      }
+
+      document.getElementById("step-content").innerHTML = `
+        <h2 class="text-sm font-bold leading-snug">${s.id}. ${s.title}</h2>
+        <p class="text-xs leading-relaxed text-[var(--foreground)]">${s.desc}</p>
+        <div class="text-[11px] bg-blue-500/10 border border-blue-500/25 rounded px-2.5 py-1.5 text-blue-700 dark:text-blue-300">
+          <strong>C-Channel Design Note:</strong> ${s.tip}
+        </div>
+      `;
+
+      const screwsEl = document.getElementById("step-screws");
+      screwsEl.innerHTML = "";
+      s.screws.forEach(sc => {
+        const row = document.createElement("div");
+        const isSel = state.selectedKind === "screw" && state.selectedGroup === sc.group;
+        row.className = "px-2.5 py-2 space-y-1 interactive-row " + (isSel ? "is-selected" : "");
+        row.innerHTML = `
+          <div class="flex items-start justify-between gap-2">
+            <div class="min-w-0">
+              <div class="font-semibold text-amber-700 dark:text-amber-300">${sc.size} &mdash; ${sc.qty} <span class="text-[10px] font-mono text-cyan-600 dark:text-cyan-400 ml-1">[Click to Zoom]</span></div>
+              <div class="text-[11px] text-[var(--foreground)]">${sc.loc}</div>
+              <div class="text-[10px] font-mono text-muted">Grid Hole: ${sc.hole}</div>
+            </div>
+            <div class="text-right shrink-0">
+              <div class="text-[11px]">${sc.nut}</div>
+              <div class="text-[10px] font-mono text-muted">${sc.sku}</div>
+            </div>
+          </div>
+          <div class="text-[10px] font-mono bg-muted/70 rounded px-1.5 py-0.5 text-[var(--foreground)]">${sc.stack}</div>
+        `;
+        row.addEventListener("mouseenter", () => { state.hoverKind = "screw"; state.hoverGroup = sc.group; renderSpotlightBanner(); });
+        row.addEventListener("mouseleave", () => { state.hoverKind = null; state.hoverGroup = null; renderSpotlightBanner(); });
+        row.addEventListener("click", () => {
+          state.selectedKind = "screw"; state.selectedGroup = sc.group; state.fullTest = false; state.stepAnim = 0.0;
+          setCamGoal(sc.focus); renderStepUI();
+        });
+        screwsEl.appendChild(row);
+      });
+
+      const bomEl = document.getElementById("step-bom");
+      bomEl.innerHTML = "";
+      s.bom.forEach(item => {
+        const row = document.createElement("div");
+        const isSel = state.selectedKind === "bom" && state.selectedGroup === item.group;
+        row.className = "px-2.5 py-1.5 flex items-start justify-between gap-2 interactive-row " + (isSel ? "is-selected" : "");
+        row.innerHTML = `
+          <div class="min-w-0">
+            <div class="font-medium truncate">${item.name}</div>
+            <div class="text-[10px] font-mono text-cyan-600 dark:text-cyan-400 truncate">${item.hole}</div>
+            <div class="text-[10px] font-mono text-muted truncate">${item.f3d}</div>
+          </div>
+          <div class="text-right shrink-0">
+            <span class="font-semibold">${item.qty}</span>
+            <div class="text-[10px] font-mono text-muted">${item.sku}</div>
+          </div>
+        `;
+        row.addEventListener("mouseenter", () => { state.hoverKind = "bom"; state.hoverGroup = item.group; renderSpotlightBanner(); });
+        row.addEventListener("mouseleave", () => { state.hoverKind = null; state.hoverGroup = null; renderSpotlightBanner(); });
+        row.addEventListener("click", () => {
+          state.selectedKind = "bom"; state.selectedGroup = item.group; state.fullTest = false;
+          setCamGoal(item.focus); renderStepUI();
+        });
+        bomEl.appendChild(row);
+      });
+
+      document.getElementById("btn-prev").disabled = state.step <= 1;
+      document.getElementById("btn-next").disabled = state.step >= steps.length;
+      renderSpotlightBanner();
+    }
+
+    function selectStep(stepNum) {
+      state.fullTest = false;
+      state.step = stepNum;
+      state.stepAnim = 0.0;
+      state.hoverKind = null;
+      state.hoverGroup = null;
+      state.selectedKind = null;
+      state.selectedGroup = null;
+      if (state.autoFocusStep && STEP_CAMERAS[stepNum]) {
+        const pose = Object.assign({}, STEP_CAMERAS[stepNum]);
+        if (stepNum >= 6 && stepNum <= 9) pose.ty += state.ext * 9.0;
+        if (stepNum === 8) pose.ty += state.ext * 9.0;
+        setCamGoal(pose);
+      }
+      updateToggleButtons();
+      renderStepUI();
+    }
+
+    function updateToggleButtons() {
+      const btnFull = document.getElementById("btn-full-test");
+      btnFull.className = "px-2.5 py-1 rounded font-medium border border-theme transition cursor-pointer " + (state.fullTest ? "btn-primary" : "btn-secondary");
+
+      const btnLbl = document.getElementById("btn-labels");
+      btnLbl.textContent = `Arrows & Holes: ${state.showLabels ? "ON" : "OFF"}`;
+      btnLbl.className = "px-2.5 py-1 rounded font-medium transition cursor-pointer " + (state.showLabels ? "btn-primary" : "btn-secondary border border-theme");
+
+      const btnGhost = document.getElementById("btn-ghost");
+      btnGhost.textContent = `Dim Earlier: ${state.ghostPrev ? "ON" : "OFF"}`;
+      btnGhost.className = "px-2.5 py-1 rounded font-medium transition cursor-pointer " + (state.ghostPrev ? "btn-primary" : "btn-secondary border border-theme");
+
+      const btnAutoFocus = document.getElementById("btn-autofocus");
+      btnAutoFocus.textContent = `Auto-Focus: ${state.autoFocusStep ? "ON" : "OFF"}`;
+      btnAutoFocus.className = "px-2.5 py-1 rounded font-medium transition cursor-pointer " + (state.autoFocusStep ? "btn-primary" : "btn-secondary border border-theme");
+
+      document.getElementById("btn-motors").textContent = state.dualMotor ? "Drive: 2\u00d7 11W (1:5)" : "Drive: 1\u00d7 11W (1:5)";
+      document.getElementById("btn-bands").textContent = `#64 Bands: ${state.bands ? "ON" : "OFF"}`;
+      document.getElementById("btn-angle").textContent = state.tilted ? "Tilt: -15\u00b0 Back" : "Tilt: 0\u00b0 Vertical";
+
+      const btnXray = document.getElementById("btn-xray");
+      btnXray.textContent = `X-Ray S0: ${state.xrayOuter ? "ON" : "OFF"}`;
+      btnXray.className = "px-2.5 py-1 rounded font-medium border border-theme transition cursor-pointer " + (state.xrayOuter ? "btn-primary" : "btn-secondary");
+    }
+
+    function setPresetCam(name) {
+      const presets = {
+        iso:     { yaw: -0.62, pitch: 0.28, dist: 42.0, tx: 0.0, ty: 8.8, tz: -1.8 },
+        front:   { yaw: 0.00,  pitch: 0.05, dist: 40.0, tx: 0.0, ty: 8.8, tz: -1.0 },
+        side:    { yaw: 1.57,  pitch: 0.08, dist: 42.0, tx: 0.0, ty: 8.8, tz: -2.5 },
+        top:     { yaw: 0.00,  pitch: 1.48, dist: 34.0, tx: 0.0, ty: 8.0, tz: -2.2 },
+        gearbox: { yaw: 2.65,  pitch: 0.28, dist: 21.0, tx: 0.0, ty: 2.5, tz: -4.0 }
+      };
+      if (presets[name]) setCamGoal(presets[name]);
+      document.querySelectorAll(".cam-btn").forEach(b => {
+        b.className = "cam-btn px-2 py-0.5 rounded font-medium cursor-pointer " + (b.dataset.cam === name ? "btn-primary" : "btn-secondary");
+      });
+    }
+
+    document.getElementById("btn-full-test").addEventListener("click", () => {
+      state.fullTest = !state.fullTest;
+      if (state.fullTest) { state.step = 10; setPresetCam("iso"); }
+      else { selectStep(state.step); return; }
+      updateToggleButtons();
+      renderStepUI();
+    });
+    document.getElementById("btn-labels").addEventListener("click", () => { state.showLabels = !state.showLabels; updateToggleButtons(); });
+    document.getElementById("btn-ghost").addEventListener("click", () => { state.ghostPrev = !state.ghostPrev; updateToggleButtons(); });
+    document.getElementById("btn-autofocus").addEventListener("click", () => { state.autoFocusStep = !state.autoFocusStep; updateToggleButtons(); });
+    document.getElementById("btn-focus-step").addEventListener("click", () => {
+      state.selectedKind = null; state.selectedGroup = null;
+      const pose = Object.assign({}, STEP_CAMERAS[state.step]);
+      if (state.step >= 6 && state.step <= 9) pose.ty += state.ext * 9.0;
+      if (state.step === 8) pose.ty += state.ext * 9.0;
+      setCamGoal(pose);
+      renderStepUI();
+    });
+    document.getElementById("btn-motors").addEventListener("click", () => { state.dualMotor = !state.dualMotor; updateToggleButtons(); renderStepUI(); });
+    document.getElementById("btn-bands").addEventListener("click", () => { state.bands = !state.bands; updateToggleButtons(); });
+    document.getElementById("btn-angle").addEventListener("click", () => { state.tilted = !state.tilted; updateToggleButtons(); });
+    document.getElementById("btn-xray").addEventListener("click", () => { state.xrayOuter = !state.xrayOuter; updateToggleButtons(); });
+    document.getElementById("btn-replay-step").addEventListener("click", () => {
+      state.fullTest = false; state.stepAnim = 0.0; updateToggleButtons(); renderStepUI();
+    });
+    document.getElementById("btn-prev").addEventListener("click", () => { if (state.step > 1) selectStep(state.step - 1); });
+    document.getElementById("btn-next").addEventListener("click", () => { if (state.step < 10) selectStep(state.step + 1); });
+
+    document.querySelectorAll(".cam-btn").forEach(btn => btn.addEventListener("click", () => setPresetCam(btn.dataset.cam)));
+
+    document.getElementById("slider-fit").addEventListener("input", (e) => {
+      const v = parseInt(e.target.value, 10) || 0;
+      state.explode = v / 100.0;
+      document.getElementById("fit-val").textContent = v + "%";
+    });
+
+    document.getElementById("slider-ext").addEventListener("input", (e) => {
+      state.autoAnimate = false;
+      document.getElementById("btn-animate").textContent = "Auto-Cycle";
+      const v = parseInt(e.target.value, 10) || 0;
+      state.targetExt = v / 100.0;
+      document.getElementById("ext-val").textContent = (state.targetExt * 18.0).toFixed(2) + '"';
+      document.querySelectorAll(".preset-btn").forEach(b => {
+        b.className = "preset-btn px-1.5 py-0.5 rounded text-[11px] cursor-pointer " + (parseInt(b.dataset.preset, 10) === v ? "btn-primary" : "btn-secondary border border-theme");
+      });
+    });
+
+    document.querySelectorAll(".preset-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        state.autoAnimate = false;
+        document.getElementById("btn-animate").textContent = "Auto-Cycle";
+        const v = parseInt(btn.dataset.preset, 10);
+        state.targetExt = v / 100.0;
+        document.getElementById("slider-ext").value = v;
+        document.getElementById("ext-val").textContent = (state.targetExt * 18.0).toFixed(2) + '"';
+        document.querySelectorAll(".preset-btn").forEach(b => {
+          b.className = "preset-btn px-1.5 py-0.5 rounded text-[11px] cursor-pointer " + (b === btn ? "btn-primary" : "btn-secondary border border-theme");
+        });
+      });
+    });
+
+    document.getElementById("btn-animate").addEventListener("click", () => {
+      state.autoAnimate = !state.autoAnimate;
+      document.getElementById("btn-animate").textContent = state.autoAnimate ? "Pause Cycle" : "Auto-Cycle";
+    });
+
+    const vpWrap = document.getElementById("viewport-wrap");
+    let dragMode = null, lastX = 0, lastY = 0;
+    vpWrap.addEventListener("contextmenu", (e) => e.preventDefault());
+    vpWrap.addEventListener("pointerdown", (e) => {
+      vpWrap.setPointerCapture(e.pointerId);
+      state.camGoal = null;
+      lastX = e.clientX;
+      lastY = e.clientY;
+      dragMode = (e.button === 2 || e.shiftKey) ? "pan" : "orbit";
+    });
+    vpWrap.addEventListener("pointermove", (e) => {
+      if (!dragMode) return;
+      const dx = e.clientX - lastX;
+      const dy = e.clientY - lastY;
+      lastX = e.clientX;
+      lastY = e.clientY;
+      if (dragMode === "orbit") {
+        state.cam.yaw -= dx * 0.008;
+        state.cam.pitch = Math.max(-1.45, Math.min(1.52, state.cam.pitch + dy * 0.008));
+      } else {
+        const scale = state.cam.dist * 0.0014;
+        const cy = Math.cos(state.cam.yaw), sy = Math.sin(state.cam.yaw);
+        state.cam.tx -= dx * scale * cy;
+        state.cam.tz += dx * scale * sy;
+        state.cam.ty += dy * scale;
+      }
+    });
+    vpWrap.addEventListener("pointerup", () => { dragMode = null; });
+    vpWrap.addEventListener("pointercancel", () => { dragMode = null; });
+    vpWrap.addEventListener("wheel", (e) => {
+      e.preventDefault();
+      state.camGoal = null;
+      const factor = e.deltaY > 0 ? 1.09 : 0.91;
+      state.cam.dist = Math.max(6.0, Math.min(95.0, state.cam.dist * factor));
+    }, { passive: false });
+
+    selectStep(1);
+    requestAnimationFrame(ensurePhysicsLoop);
+  })();
+  </script>
+</body>
+</html>
